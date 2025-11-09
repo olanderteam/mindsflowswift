@@ -8,7 +8,7 @@
 import SwiftUI
 import Foundation
 
-/// ViewModel para gerenciar o histórico de crescimento
+/// ViewModel to manage growth history
 @MainActor
 class HistoryViewModel: ObservableObject {
     // MARK: - Published Properties
@@ -19,7 +19,7 @@ class HistoryViewModel: ObservableObject {
     @Published var insights: [GrowthInsight] = []
     @Published var detailedHistory: [HistoryEntry] = []
     
-    // Dados para gráficos
+    // Data for charts
     private var energyData: [ChartDataPoint] = []
     private var emotionData: [ChartDataPoint] = []
     private var tasksData: [ChartDataPoint] = []
@@ -33,7 +33,7 @@ class HistoryViewModel: ObservableObject {
     
     init() {
         _Concurrency.Task {
-            // Aguardar autenticação estar completa
+            // Wait for authentication to complete
             try? await _Concurrency.Task.sleep(nanoseconds: 1_500_000_000)
             
             if AuthManager.shared.isAuthenticated {
@@ -56,16 +56,16 @@ class HistoryViewModel: ObservableObject {
                 throw SupabaseError.notAuthenticated
             }
             
-            // Carregar dados de estados mentais
+            // Load mental states data
             await loadMentalStatesData(userId: userId)
             
-            // Carregar dados de tarefas
+            // Load tasks data
             await loadTasksData(userId: userId)
             
-            // Carregar dados de wisdom
+            // Load wisdom data
             await loadWisdomData(userId: userId)
             
-            // Gerar estatísticas e insights
+            // Generate statistics and insights
             generateSummaryStats()
             generateInsights()
             generateDetailedHistory()
@@ -74,9 +74,9 @@ class HistoryViewModel: ObservableObject {
             
         } catch {
             print("❌ Failed to load history data: \(error)")
-            errorMessage = "Erro ao carregar histórico: \(error.localizedDescription)"
+            errorMessage = "Error loading history: \(error.localizedDescription)"
             
-            // Fallback para dados de exemplo
+            // Fallback to sample data
             loadSampleData()
         }
         
@@ -91,7 +91,7 @@ class HistoryViewModel: ObservableObject {
     
     private func loadMentalStatesData(userId: UUID) async {
         do {
-            // Buscar estados mentais dos últimos 365 dias
+            // Fetch mental states from last 365 days
             let startDate = Calendar.current.date(byAdding: .day, value: -365, to: Date())!
             
             let query = SupabaseQuery
@@ -100,15 +100,15 @@ class HistoryViewModel: ObservableObject {
             
             let states: [MentalState] = try await supabase.fetch(from: "mental_states", query: query)
             
-            // Filtrar últimos 365 dias
+            // Filter last 365 days
             let filteredStates = states.filter { $0.createdAt >= startDate }
             
-            // Converter para dados de gráfico
+            // Convert to chart data
             energyData = filteredStates.map { state in
                 ChartDataPoint(date: state.createdAt, value: Double(state.energy))
             }
             
-            // Mapear emoções para valores numéricos (1-10)
+            // Map emotions to numeric values (1-10)
             emotionData = filteredStates.map { state in
                 let emotionValue = emotionToValue(state.mood)
                 return ChartDataPoint(date: state.createdAt, value: emotionValue)
@@ -131,7 +131,7 @@ class HistoryViewModel: ObservableObject {
             
             let tasks: [Task] = try await supabase.fetch(from: "tasks", query: query)
             
-            // Agrupar tarefas por dia
+            // Group tasks by day
             let calendar = Calendar.current
             var tasksByDay: [Date: Int] = [:]
             
@@ -140,7 +140,7 @@ class HistoryViewModel: ObservableObject {
                 tasksByDay[dayStart, default: 0] += 1
             }
             
-            // Converter para dados de gráfico
+            // Convert to chart data
             tasksData = tasksByDay.map { date, count in
                 ChartDataPoint(date: date, value: Double(count))
             }.sorted { $0.date < $1.date }
@@ -162,7 +162,7 @@ class HistoryViewModel: ObservableObject {
             
             let wisdomEntries: [Wisdom] = try await supabase.fetch(from: "wisdom_entries", query: query)
             
-            // Agrupar wisdom por dia
+            // Group wisdom by day
             let calendar = Calendar.current
             var wisdomByDay: [Date: Int] = [:]
             
@@ -171,7 +171,7 @@ class HistoryViewModel: ObservableObject {
                 wisdomByDay[dayStart, default: 0] += 1
             }
             
-            // Converter para dados de gráfico
+            // Convert to chart data
             wisdomData = wisdomByDay.map { date, count in
                 ChartDataPoint(date: date, value: Double(count))
             }.sorted { $0.date < $1.date }
@@ -189,21 +189,21 @@ class HistoryViewModel: ObservableObject {
         let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
         let twoWeeksAgo = Calendar.current.date(byAdding: .day, value: -14, to: Date())!
         
-        // Energia média
+        // Average energy
         let recentEnergy = energyData.filter { $0.date >= weekAgo }
         let previousEnergy = energyData.filter { $0.date >= twoWeeksAgo && $0.date < weekAgo }
         let avgEnergy = recentEnergy.isEmpty ? 0 : recentEnergy.map { $0.value }.reduce(0, +) / Double(recentEnergy.count)
         let prevAvgEnergy = previousEnergy.isEmpty ? 0 : previousEnergy.map { $0.value }.reduce(0, +) / Double(previousEnergy.count)
         let energyChange = prevAvgEnergy == 0 ? 0 : ((avgEnergy - prevAvgEnergy) / prevAvgEnergy) * 100
         
-        // Emoção média
+        // Average emotion
         let recentEmotion = emotionData.filter { $0.date >= weekAgo }
         let previousEmotion = emotionData.filter { $0.date >= twoWeeksAgo && $0.date < weekAgo }
         let avgEmotion = recentEmotion.isEmpty ? 0 : recentEmotion.map { $0.value }.reduce(0, +) / Double(recentEmotion.count)
         let prevAvgEmotion = previousEmotion.isEmpty ? 0 : previousEmotion.map { $0.value }.reduce(0, +) / Double(previousEmotion.count)
         let emotionChange = prevAvgEmotion == 0 ? 0 : ((avgEmotion - prevAvgEmotion) / prevAvgEmotion) * 100
         
-        // Tarefas
+        // Tasks
         let recentTasks = tasksData.filter { $0.date >= weekAgo }
         let previousTasks = tasksData.filter { $0.date >= twoWeeksAgo && $0.date < weekAgo }
         let totalTasks = Int(recentTasks.map { $0.value }.reduce(0, +))
@@ -219,30 +219,30 @@ class HistoryViewModel: ObservableObject {
         
         summaryStats = [
             SummaryStatistic(
-                title: "Energia Média",
+                title: "Average Energy",
                 value: String(format: "%.1f", avgEnergy),
-                subtitle: String(format: "%+.0f%% vs semana anterior", energyChange),
+                subtitle: String(format: "%+.0f%% vs previous week", energyChange),
                 color: .blue,
                 icon: "bolt.fill"
             ),
             SummaryStatistic(
-                title: "Emoção Média",
+                title: "Average Emotion",
                 value: String(format: "%.1f", avgEmotion),
-                subtitle: String(format: "%+.0f%% vs semana anterior", emotionChange),
+                subtitle: String(format: "%+.0f%% vs previous week", emotionChange),
                 color: .purple,
                 icon: "heart.fill"
             ),
             SummaryStatistic(
-                title: "Tarefas Criadas",
+                title: "Tasks Created",
                 value: "\(totalTasks)",
-                subtitle: String(format: "%+.0f%% vs semana anterior", tasksChange),
+                subtitle: String(format: "%+.0f%% vs previous week", tasksChange),
                 color: .green,
                 icon: "checkmark.circle.fill"
             ),
             SummaryStatistic(
-                title: "Sabedorias Adicionadas",
+                title: "Wisdom Added",
                 value: "\(totalWisdom)",
-                subtitle: String(format: "%+.0f%% vs semana anterior", wisdomChange),
+                subtitle: String(format: "%+.0f%% vs previous week", wisdomChange),
                 color: .orange,
                 icon: "lightbulb.fill"
             )
@@ -252,27 +252,27 @@ class HistoryViewModel: ObservableObject {
     private func generateInsights() {
         var newInsights: [GrowthInsight] = []
         
-        // Análise de tendência de energia
+        // Energy trend analysis
         let energyTrend = calculateTrend(for: .energy)
         if energyTrend == .up {
             newInsights.append(GrowthInsight(
                 id: UUID(),
                 type: .positive,
-                title: "Tendência Positiva de Energia",
-                description: "Sua energia tem aumentado consistentemente. Continue com os hábitos atuais!",
+                title: "Positive Energy Trend",
+                description: "Your energy has been increasing consistently. Keep up your current habits!",
                 icon: "arrow.up.circle.fill"
             ))
         } else if energyTrend == .down {
             newInsights.append(GrowthInsight(
                 id: UUID(),
                 type: .negative,
-                title: "Energia em Declínio",
-                description: "Sua energia tem diminuído. Considere revisar seus hábitos de sono e alimentação.",
+                title: "Declining Energy",
+                description: "Your energy has been decreasing. Consider reviewing your sleep and eating habits.",
                 icon: "arrow.down.circle.fill"
             ))
         }
         
-        // Análise de produtividade
+        // Productivity analysis
         let recentTasks = tasksData.filter { $0.date >= Calendar.current.date(byAdding: .day, value: -7, to: Date())! }
         let avgTasksPerDay = recentTasks.isEmpty ? 0 : recentTasks.map { $0.value }.reduce(0, +) / Double(recentTasks.count)
         
@@ -280,19 +280,19 @@ class HistoryViewModel: ObservableObject {
             newInsights.append(GrowthInsight(
                 id: UUID(),
                 type: .positive,
-                title: "Alta Produtividade",
-                description: "Você está criando uma média de \(String(format: "%.1f", avgTasksPerDay)) tarefas por dia. Excelente!",
+                title: "High Productivity",
+                description: "You're creating an average of \(String(format: "%.1f", avgTasksPerDay)) tasks per day. Excellent!",
                 icon: "star.circle.fill"
             ))
         }
         
-        // Sugestão baseada em dados
+        // Data-based suggestion
         if !energyData.isEmpty && !tasksData.isEmpty {
             newInsights.append(GrowthInsight(
                 id: UUID(),
                 type: .suggestion,
-                title: "Otimize Seu Tempo",
-                description: "Planeje tarefas importantes quando sua energia estiver alta para melhor produtividade.",
+                title: "Optimize Your Time",
+                description: "Plan important tasks when your energy is high for better productivity.",
                 icon: "lightbulb.circle.fill"
             ))
         }
@@ -303,52 +303,52 @@ class HistoryViewModel: ObservableObject {
     private func generateDetailedHistory() {
         var entries: [HistoryEntry] = []
         
-        // Adicionar últimas atualizações de energia
+        // Add latest energy updates
         if let latestEnergy = energyData.last {
             entries.append(HistoryEntry(
                 id: UUID(),
                 date: latestEnergy.date,
                 type: .energy,
-                title: "Energia Atualizada",
-                description: "Nível de energia registrado",
+                title: "Energy Updated",
+                description: "Energy level recorded",
                 value: "\(Int(latestEnergy.value))/10"
             ))
         }
         
-        // Adicionar últimas tarefas
+        // Add recent tasks
         let recentTasks = tasksData.suffix(3)
         for taskData in recentTasks {
             entries.append(HistoryEntry(
                 id: UUID(),
                 date: taskData.date,
                 type: .task,
-                title: "Tarefas Criadas",
-                description: "\(Int(taskData.value)) tarefa(s) criada(s)",
+                title: "Tasks Created",
+                description: "\(Int(taskData.value)) task(s) created",
                 value: "\(Int(taskData.value))"
             ))
         }
         
-        // Adicionar últimas wisdom
+        // Add recent wisdom
         let recentWisdom = wisdomData.suffix(3)
         for wisdomData in recentWisdom {
             entries.append(HistoryEntry(
                 id: UUID(),
                 date: wisdomData.date,
                 type: .wisdom,
-                title: "Sabedorias Adicionadas",
-                description: "\(Int(wisdomData.value)) sabedoria(s) adicionada(s)",
+                title: "Wisdom Added",
+                description: "\(Int(wisdomData.value)) wisdom entr(y/ies) added",
                 value: "\(Int(wisdomData.value))"
             ))
         }
         
-        // Ordenar por data (mais recentes primeiro)
+        // Sort by date (most recent first)
         detailedHistory = entries.sorted { $0.date > $1.date }
     }
     
     // MARK: - Helper Methods
     
     private func emotionToValue(_ emotion: Emotion) -> Double {
-        // Mapear emoções para valores de 1-10
+        // Map emotions to values from 1-10
         switch emotion {
         case .happy, .grateful, .inspired, .motivated:
             return 9.0
@@ -479,7 +479,7 @@ class HistoryViewModel: ObservableObject {
     }
     
     private func loadSampleData() {
-        // Dados de energia (últimos 30 dias)
+        // Energy data (last 30 days)
         energyData = generateSampleData(
             baseValue: 7.0,
             variation: 2.0,
@@ -487,7 +487,7 @@ class HistoryViewModel: ObservableObject {
             trend: .up
         )
         
-        // Dados de emoção (últimos 30 dias)
+        // Emotion data (last 30 days)
         emotionData = generateSampleData(
             baseValue: 6.5,
             variation: 1.5,
@@ -495,7 +495,7 @@ class HistoryViewModel: ObservableObject {
             trend: .stable
         )
         
-        // Dados de tarefas (últimos 30 dias)
+        // Tasks data (last 30 days)
         tasksData = generateSampleData(
             baseValue: 5.0,
             variation: 3.0,
@@ -503,7 +503,7 @@ class HistoryViewModel: ObservableObject {
             trend: .up
         )
         
-        // Dados de sabedoria (últimos 30 dias)
+        // Wisdom data (last 30 days)
         wisdomData = generateSampleData(
             baseValue: 2.0,
             variation: 1.0,
@@ -511,33 +511,33 @@ class HistoryViewModel: ObservableObject {
             trend: .up
         )
         
-        // Estatísticas resumidas
+        // Summary statistics
         summaryStats = [
             SummaryStatistic(
-                title: "Energia Média",
+                title: "Average Energy",
                 value: "7.2",
-                subtitle: "+12% vs semana anterior",
+                subtitle: "+12% vs previous week",
                 color: .blue,
                 icon: "bolt.fill"
             ),
             SummaryStatistic(
-                title: "Emoção Média",
+                title: "Average Emotion",
                 value: "6.8",
-                subtitle: "+5% vs semana anterior",
+                subtitle: "+5% vs previous week",
                 color: .purple,
                 icon: "heart.fill"
             ),
             SummaryStatistic(
-                title: "Tarefas Concluídas",
+                title: "Tasks Completed",
                 value: "42",
-                subtitle: "+18% vs semana anterior",
+                subtitle: "+18% vs previous week",
                 color: .green,
                 icon: "checkmark.circle.fill"
             ),
             SummaryStatistic(
-                title: "Sabedorias Adicionadas",
+                title: "Wisdom Added",
                 value: "8",
-                subtitle: "+25% vs semana anterior",
+                subtitle: "+25% vs previous week",
                 color: .orange,
                 icon: "lightbulb.fill"
             )
@@ -548,59 +548,59 @@ class HistoryViewModel: ObservableObject {
             GrowthInsight(
                 id: UUID(),
                 type: .positive,
-                title: "Tendência Positiva de Energia",
-                description: "Sua energia tem aumentado consistentemente nos últimos 7 dias. Continue com os hábitos atuais!",
+                title: "Positive Energy Trend",
+                description: "Your energy has been increasing consistently over the last 7 days. Keep up your current habits!",
                 icon: "arrow.up.circle.fill"
             ),
             GrowthInsight(
                 id: UUID(),
                 type: .neutral,
-                title: "Estabilidade Emocional",
-                description: "Suas emoções estão estáveis. Considere explorar novas atividades para crescimento.",
+                title: "Emotional Stability",
+                description: "Your emotions are stable. Consider exploring new activities for growth.",
                 icon: "equal.circle.fill"
             ),
             GrowthInsight(
                 id: UUID(),
                 type: .suggestion,
-                title: "Oportunidade de Melhoria",
-                description: "Você tem completado mais tarefas quando sua energia está alta. Planeje tarefas importantes para esses momentos.",
+                title: "Improvement Opportunity",
+                description: "You complete more tasks when your energy is high. Plan important tasks for those moments.",
                 icon: "lightbulb.circle.fill"
             )
         ]
         
-        // Histórico detalhado
+        // Detailed history
         detailedHistory = [
             HistoryEntry(
                 id: UUID(),
                 date: Date(),
                 type: .energy,
-                title: "Energia Atualizada",
-                description: "Nível de energia definido como 8/10",
+                title: "Energy Updated",
+                description: "Energy level set to 8/10",
                 value: "8/10"
             ),
             HistoryEntry(
                 id: UUID(),
                 date: Calendar.current.date(byAdding: .hour, value: -2, to: Date())!,
                 type: .task,
-                title: "Tarefa Concluída",
-                description: "Revisar documentação do projeto",
-                value: "Concluída"
+                title: "Task Completed",
+                description: "Review project documentation",
+                value: "Completed"
             ),
             HistoryEntry(
                 id: UUID(),
                 date: Calendar.current.date(byAdding: .hour, value: -4, to: Date())!,
                 type: .wisdom,
-                title: "Nova Sabedoria",
-                description: "Adicionada reflexão sobre produtividade",
-                value: "Nova"
+                title: "New Wisdom",
+                description: "Added reflection on productivity",
+                value: "New"
             ),
             HistoryEntry(
                 id: UUID(),
                 date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!,
                 type: .emotion,
-                title: "Emoção Atualizada",
-                description: "Estado emocional definido como Motivado",
-                value: "Motivado"
+                title: "Emotion Updated",
+                description: "Emotional state set to Motivated",
+                value: "Motivated"
             )
         ]
     }
@@ -617,7 +617,7 @@ class HistoryViewModel: ObservableObject {
         for i in 0..<days {
             let date = Calendar.current.date(byAdding: .day, value: -days + i, to: now)!
             
-            // Adiciona tendência
+            // Add trend
             let trendValue: Double
             switch trend {
             case .up:
@@ -628,7 +628,7 @@ class HistoryViewModel: ObservableObject {
                 trendValue = 0
             }
             
-            // Adiciona variação aleatória
+            // Add random variation
             let randomVariation = Double.random(in: -variation...variation)
             let value = max(0, baseValue + trendValue + randomVariation)
             
@@ -641,13 +641,13 @@ class HistoryViewModel: ObservableObject {
 
 // MARK: - Supporting Types
 
-/// Ponto de dados para gráficos
+/// Data point for charts
 struct ChartDataPoint {
     let date: Date
     let value: Double
 }
 
-/// Estatística resumida
+/// Summary statistic
 struct SummaryStatistic {
     let title: String
     let value: String
@@ -656,7 +656,7 @@ struct SummaryStatistic {
     let icon: String
 }
 
-/// Insight de crescimento
+/// Growth insight
 struct GrowthInsight {
     let id: UUID
     let type: InsightType
@@ -665,7 +665,7 @@ struct GrowthInsight {
     let icon: String
 }
 
-/// Entrada do histórico
+/// History entry
 struct HistoryEntry {
     let id: UUID
     let date: Date
@@ -684,16 +684,16 @@ struct HistoryEntry {
     }
 }
 
-/// Período de tempo para análise
+/// Time period for analysis
 enum TimeRange: CaseIterable {
     case week, month, threeMonths, year
     
     var displayName: String {
         switch self {
-        case .week: return "7 dias"
-        case .month: return "30 dias"
-        case .threeMonths: return "3 meses"
-        case .year: return "1 ano"
+        case .week: return "7 days"
+        case .month: return "30 days"
+        case .threeMonths: return "3 months"
+        case .year: return "1 year"
         }
     }
     
@@ -716,16 +716,16 @@ enum TimeRange: CaseIterable {
     }
 }
 
-/// Métrica de crescimento
+/// Growth metric
 enum GrowthMetric: CaseIterable {
     case energy, emotion, tasks, wisdom
     
     var displayName: String {
         switch self {
-        case .energy: return "Energia"
-        case .emotion: return "Emoção"
-        case .tasks: return "Tarefas"
-        case .wisdom: return "Sabedoria"
+        case .energy: return "Energy"
+        case .emotion: return "Emotion"
+        case .tasks: return "Tasks"
+        case .wisdom: return "Wisdom"
         }
     }
     
@@ -748,21 +748,21 @@ enum GrowthMetric: CaseIterable {
     }
 }
 
-/// Direção da tendência
+/// Trend direction
 enum TrendDirection {
     case up, down, stable
 }
 
-/// Tipo de insight
+/// Insight type
 enum InsightType {
     case positive, negative, neutral, suggestion
     
     var displayName: String {
         switch self {
-        case .positive: return "Positivo"
-        case .negative: return "Atenção"
-        case .neutral: return "Neutro"
-        case .suggestion: return "Sugestão"
+        case .positive: return "Positive"
+        case .negative: return "Attention"
+        case .neutral: return "Neutral"
+        case .suggestion: return "Suggestion"
         }
     }
     
@@ -776,7 +776,7 @@ enum InsightType {
     }
 }
 
-/// Tipo de entrada do histórico
+/// History entry type
 enum HistoryEntryType {
     case energy, emotion, task, wisdom
     
