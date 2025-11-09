@@ -23,8 +23,8 @@ extension Dictionary where Key == String, Value == AnyJSON {
     }
 }
 
-/// Manager para integração com Supabase
-/// Gerencia autenticação e operações de banco de dados
+/// Manager for Supabase integration
+/// Manages authentication and database operations
 @MainActor
 class SupabaseManager: ObservableObject {
     
@@ -49,25 +49,25 @@ class SupabaseManager: ObservableObject {
         var description: String {
             switch self {
             case .connected:
-                return "Conectado"
+                return "Connected"
             case .connecting:
-                return "Conectando..."
+                return "Connecting..."
             case .disconnected:
-                return "Desconectado"
+                return "Disconnected"
             case .error(let message):
-                return "Erro: \(message)"
+                return "Error: \(message)"
             }
         }
     }
     
     // MARK: - Initialization
     private init() {
-        // Validar configuração
+        // Validate configuration
         guard SupabaseConfig.validate() else {
             fatalError("Invalid Supabase configuration")
         }
         
-        // Inicializar cliente Supabase com credenciais reais
+        // Initialize Supabase client with real credentials
         self.supabase = SupabaseClient(
             supabaseURL: SupabaseConfig.url,
             supabaseKey: SupabaseConfig.key
@@ -75,10 +75,10 @@ class SupabaseManager: ObservableObject {
         
         print("✅ SupabaseManager initialized with project: \(SupabaseConfig.projectURL)")
         
-        // Iniciar monitoramento de rede
+        // Start network monitoring
         _ = NetworkMonitor.shared
         
-        // Verificar conexão e status de autenticação
+        // Check connection and authentication status
         _Concurrency.Task {
             await checkConnection()
             await checkAuthStatus()
@@ -87,12 +87,12 @@ class SupabaseManager: ObservableObject {
     
     // MARK: - Connection Management
     
-    /// Verifica conexão com Supabase
+    /// Checks connection with Supabase
     func checkConnection() async {
         connectionStatus = .connecting
         
         do {
-            // Tentar fazer uma query simples para verificar conexão
+            // Try a simple query to verify connection
             struct EmptyResponse: Codable {}
             let _: [EmptyResponse] = try await supabase
                 .from("profiles")
@@ -117,7 +117,7 @@ class SupabaseManager: ObservableObject {
     
     // MARK: - Authentication
     
-    /// Verifica status de autenticação
+    /// Checks authentication status
     func checkAuthStatus() async {
         do {
             // Verificar se há sessão ativa no Supabase
@@ -143,23 +143,23 @@ class SupabaseManager: ObservableObject {
         }
     }
     
-    /// ID do usuário atual (usa AuthManager como fonte de verdade)
+    /// Current user ID (uses AuthManager as source of truth)
     var currentUserId: String? {
         return AuthManager.shared.currentUser?.id.uuidString
     }
     
-    /// Usuário atual (usa AuthManager como fonte de verdade)
+    /// Current user (uses AuthManager as source of truth)
     var authenticatedUser: User? {
         return AuthManager.shared.currentUser
     }
     
     // MARK: - Generic CRUD Operations
     
-    /// Busca dados do banco com query opcional
+    /// Fetches data from database with optional query
     /// - Parameters:
-    ///   - table: Nome da tabela
-    ///   - query: Query opcional para filtros
-    /// - Returns: Array de objetos do tipo especificado
+    ///   - table: Table name
+    ///   - query: Optional query for filters
+    /// - Returns: Array of objects of specified type
     func fetch<T: Codable>(
         from table: String,
         query: SupabaseQuery? = nil
@@ -206,11 +206,11 @@ class SupabaseManager: ObservableObject {
         return response
     }
     
-    /// Insere dados no banco
+    /// Inserts data into database
     /// - Parameters:
-    ///   - data: Dados a serem inseridos
-    ///   - table: Nome da tabela
-    /// - Returns: Dados inseridos com ID gerado
+    ///   - data: Data to be inserted
+    ///   - table: Table name
+    /// - Returns: Inserted data with generated ID
     func insert<T: Codable>(_ data: T, into table: String) async throws -> T {
         guard isOnline else {
             throw SupabaseError.offline
@@ -247,12 +247,12 @@ class SupabaseManager: ObservableObject {
         return response
     }
     
-    /// Atualiza dados no banco
+    /// Updates data in database
     /// - Parameters:
-    ///   - data: Dados atualizados
-    ///   - table: Nome da tabela
-    ///   - id: ID do registro
-    /// - Returns: Dados atualizados
+    ///   - data: Updated data
+    ///   - table: Table name
+    ///   - id: Record ID
+    /// - Returns: Updated data
     func update<T: Codable>(_ data: T, in table: String, id: UUID) async throws -> T {
         guard isOnline else {
             throw SupabaseError.offline
@@ -270,10 +270,10 @@ class SupabaseManager: ObservableObject {
         return response
     }
     
-    /// Deleta dados do banco
+    /// Deletes data from database
     /// - Parameters:
-    ///   - table: Nome da tabela
-    ///   - id: ID do registro
+    ///   - table: Table name
+    ///   - id: Record ID
     func delete(from table: String, id: UUID) async throws {
         guard isOnline else {
             throw SupabaseError.offline
@@ -305,11 +305,11 @@ class SupabaseManager: ObservableObject {
         print("✅ Deleted items from \(table)")
     }
     
-    /// Conta registros na tabela
+    /// Counts records in table
     /// - Parameters:
-    ///   - table: Nome da tabela
-    ///   - query: Query opcional para filtros
-    /// - Returns: Número de registros
+    ///   - table: Table name
+    ///   - query: Optional query for filters
+    /// - Returns: Number of records
     func count(in table: String, query: SupabaseQuery? = nil) async throws -> Int {
         guard isOnline else {
             throw SupabaseError.offline
@@ -327,13 +327,13 @@ class SupabaseManager: ObservableObject {
     
     // MARK: - Realtime Subscriptions
     
-    /// Subscreve a mudanças em uma tabela
+    /// Subscribes to changes in a table
     /// - Parameters:
-    ///   - table: Nome da tabela
-    ///   - event: Tipo de evento (insert, update, delete, *)
-    ///   - filter: Filtro opcional (ex: "user_id=eq.123")
-    ///   - onChange: Callback chamado quando há mudanças
-    /// - Returns: Channel do Realtime para gerenciar a subscrição
+    ///   - table: Table name
+    ///   - event: Event type (insert, update, delete, *)
+    ///   - filter: Optional filter (e.g. "user_id=eq.123")
+    ///   - onChange: Callback called when there are changes
+    /// - Returns: Realtime channel to manage subscription
     func subscribe<T: Codable>(
         to table: String,
         event: RealtimeEvent = .all,
@@ -349,8 +349,8 @@ class SupabaseManager: ObservableObject {
         return channel
     }
     
-    /// Cancela subscrição de um channel
-    /// - Parameter channel: Channel a ser cancelado
+    /// Cancels subscription from a channel
+    /// - Parameter channel: Channel to be cancelled
     func unsubscribe(from channel: RealtimeChannelV2) async {
         await channel.unsubscribe()
         print("✅ Unsubscribed from realtime channel")
@@ -359,7 +359,7 @@ class SupabaseManager: ObservableObject {
 
 // MARK: - Supabase Query Builder
 
-/// Construtor de queries para Supabase
+/// Query builder for Supabase
 struct SupabaseQuery {
     private var filters: [(String, String, Any)] = []
     private var orderColumn: String?
@@ -368,35 +368,35 @@ struct SupabaseQuery {
     private var rangeStart: Int?
     private var rangeEnd: Int?
     
-    /// Adiciona filtro de igualdade
+    /// Adds equality filter
     func eq(_ column: String, value: Any) -> SupabaseQuery {
         var query = self
         query.filters.append((column, "eq", value))
         return query
     }
     
-    /// Adiciona filtro de diferença
+    /// Adds inequality filter
     func neq(_ column: String, value: Any) -> SupabaseQuery {
         var query = self
         query.filters.append((column, "neq", value))
         return query
     }
     
-    /// Adiciona filtro maior que
+    /// Adds greater than filter
     func gt(_ column: String, value: Any) -> SupabaseQuery {
         var query = self
         query.filters.append((column, "gt", value))
         return query
     }
     
-    /// Adiciona filtro menor que
+    /// Adds less than filter
     func lt(_ column: String, value: Any) -> SupabaseQuery {
         var query = self
         query.filters.append((column, "lt", value))
         return query
     }
     
-    /// Adiciona ordenação
+    /// Adds ordering
     func orderBy(_ column: String, descending: Bool = false) -> SupabaseQuery {
         var query = self
         query.orderColumn = column
@@ -404,14 +404,14 @@ struct SupabaseQuery {
         return query
     }
     
-    /// Adiciona limite
+    /// Adds limit
     func limit(_ value: Int) -> SupabaseQuery {
         var query = self
         query.limitValue = value
         return query
     }
     
-    /// Adiciona range (paginação)
+    /// Adds range (pagination)
     func range(from start: Int, to end: Int) -> SupabaseQuery {
         var query = self
         query.rangeStart = start
@@ -419,7 +419,7 @@ struct SupabaseQuery {
         return query
     }
     
-    /// Aplica a query ao query builder do Supabase
+    /// Applies query to Supabase query builder
     func apply<T>(to builder: T) -> T {
         var result = builder
         
@@ -461,12 +461,12 @@ struct SupabaseQuery {
     
     // MARK: - Convenience Methods
     
-    /// Filtro por user_id
+    /// Filter by user_id
     static func userId(_ id: UUID) -> SupabaseQuery {
         return SupabaseQuery().eq("user_id", value: id.uuidString)
     }
     
-    /// Filtro por user_id com ordenação por data
+    /// Filter by user_id with date ordering
     static func userIdOrderedByDate(_ id: UUID, descending: Bool = true) -> SupabaseQuery {
         return SupabaseQuery()
             .eq("user_id", value: id.uuidString)
@@ -509,17 +509,17 @@ enum SupabaseError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notAuthenticated:
-            return "Você precisa estar autenticado"
+            return "You need to be authenticated"
         case .networkError(let error):
-            return "Erro de rede: \(error.localizedDescription)"
+            return "Network error: \(error.localizedDescription)"
         case .invalidData:
-            return "Dados inválidos"
+            return "Invalid data"
         case .notFound:
-            return "Registro não encontrado"
+            return "Record not found"
         case .permissionDenied:
-            return "Permissão negada"
+            return "Permission denied"
         case .offline:
-            return "Você está offline. As alterações serão sincronizadas quando voltar online."
+            return "You are offline. Changes will be synced when you're back online."
         }
     }
 }
