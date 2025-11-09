@@ -8,23 +8,23 @@
 import Foundation
 import SwiftUI
 
-/// Modelo para representar uma tarefa no sistema Minds Flow
-/// Cada tarefa tem significado e está conectada ao nível de energia do usuário
+/// Model to represent a task in the Minds Flow system
+/// Each task has meaning and is connected to the user's energy level
 struct Task: Codable, Identifiable {
     
     // MARK: - Properties
     let id: UUID
     var title: String
-    var description: String?        // Opcional - pode ser NULL no banco
+    var description: String?        // Optional - can be NULL in database
     var energyLevel: EnergyLevel
-    var purpose: String?            // Opcional - pode ser NULL no banco
+    var purpose: String?            // Optional - can be NULL in database
     var isCompleted: Bool
-    var dueDate: Date?              // NOVO: Data de vencimento
-    var timeEstimate: Int?          // NOVO: Estimativa de tempo em minutos
+    var dueDate: Date?              // NEW: Due date
+    var timeEstimate: Int?          // NEW: Time estimate in minutes
     var createdAt: Date
     var updatedAt: Date
     var completedAt: Date?
-    let userId: UUID                // Mudado de String para UUID
+    let userId: UUID                // Changed from String to UUID
     
     // MARK: - Supabase Mapping
     enum CodingKeys: String, CodingKey {
@@ -54,7 +54,7 @@ struct Task: Codable, Identifiable {
         isCompleted = try container.decode(Bool.self, forKey: .isCompleted)
         dueDate = try container.decodeIfPresent(Date.self, forKey: .dueDate)
         
-        // Decodificar time_estimate que pode vir como String ou Int
+        // Decode time_estimate which can come as String or Int
         if let timeEstimateInt = try? container.decodeIfPresent(Int.self, forKey: .timeEstimate) {
             timeEstimate = timeEstimateInt
         } else if let timeEstimateString = try? container.decodeIfPresent(String.self, forKey: .timeEstimate) {
@@ -132,25 +132,25 @@ struct Task: Codable, Identifiable {
 
 // MARK: - Energy Level Enum
 
-/// Níveis de energia para categorizar tarefas
+/// Energy levels to categorize tasks
 enum EnergyLevel: String, CaseIterable, Codable {
     case high = "high"
     case medium = "medium"
     case low = "low"
     
-    /// Descrição legível do nível de energia
+    /// Readable description of energy level
     var displayName: String {
         switch self {
         case .high:
-            return "Alta Energia"
+            return "High Energy"
         case .medium:
-            return "Média Energia"
+            return "Medium Energy"
         case .low:
-            return "Baixa Energia"
+            return "Low Energy"
         }
     }
     
-    /// Emoji representativo do nível de energia
+    /// Representative emoji for energy level
     var emoji: String {
         switch self {
         case .high:
@@ -162,7 +162,7 @@ enum EnergyLevel: String, CaseIterable, Codable {
         }
     }
     
-    /// Cor associada ao nível de energia
+    /// Associated color for energy level
     var colorName: String {
         switch self {
         case .high:
@@ -174,7 +174,7 @@ enum EnergyLevel: String, CaseIterable, Codable {
         }
     }
     
-    /// Ícone do SF Symbols para o nível de energia
+    /// SF Symbols icon for energy level
     var icon: String {
         switch self {
         case .high:
@@ -186,7 +186,7 @@ enum EnergyLevel: String, CaseIterable, Codable {
         }
     }
     
-    /// Cor para UI do nível de energia
+    /// UI color for energy level
     var color: Color {
         switch self {
         case .high:
@@ -203,21 +203,21 @@ enum EnergyLevel: String, CaseIterable, Codable {
 
 extension Task {
     
-    /// Marca a tarefa como concluída
+    /// Marks the task as completed
     mutating func markAsCompleted() {
         self.isCompleted = true
         self.completedAt = Date()
         self.updatedAt = Date()
     }
     
-    /// Marca a tarefa como não concluída
+    /// Marks the task as incomplete
     mutating func markAsIncomplete() {
         self.isCompleted = false
         self.completedAt = nil
         self.updatedAt = Date()
     }
     
-    /// Atualiza os dados da tarefa
+    /// Updates the task data
     mutating func update(
         title: String? = nil,
         description: String? = nil,
@@ -235,8 +235,8 @@ extension Task {
         self.updatedAt = Date()
     }
     
-    /// Valida os dados da tarefa
-    /// - Throws: ValidationError se os dados forem inválidos
+    /// Validates the task data
+    /// - Throws: ValidationError if data is invalid
     func validate() throws {
         guard !title.isEmpty else {
             throw ValidationError.emptyTitle
@@ -253,18 +253,18 @@ extension Task {
         }
         
         if let due = dueDate, due < Date().addingTimeInterval(-86400) {
-            // Permitir datas até 1 dia no passado (para tarefas atrasadas)
+            // Allow dates up to 1 day in the past (for overdue tasks)
             throw ValidationError.invalidDueDate
         }
     }
     
-    /// Verifica se a tarefa está atrasada
+    /// Checks if the task is overdue
     var isOverdue: Bool {
         guard let due = dueDate, !isCompleted else { return false }
         return due < Date()
     }
     
-    /// Retorna o tempo estimado formatado
+    /// Returns the formatted time estimate
     var formattedTimeEstimate: String? {
         guard let estimate = timeEstimate else { return nil }
         
@@ -281,7 +281,7 @@ extension Task {
         }
     }
     
-    /// Retorna a data de vencimento formatada
+    /// Returns the formatted due date
     var formattedDueDate: String? {
         guard let due = dueDate else { return nil }
         
@@ -289,22 +289,22 @@ extension Task {
         let calendar = Calendar.current
         
         if calendar.isDateInToday(due) {
-            return "Hoje"
+            return "Today"
         } else if calendar.isDateInTomorrow(due) {
-            return "Amanhã"
+            return "Tomorrow"
         } else if calendar.isDateInYesterday(due) {
-            return "Ontem"
+            return "Yesterday"
         } else {
             formatter.dateStyle = .short
             return formatter.string(from: due)
         }
     }
     
-    /// Verifica se a tarefa é adequada para o nível de energia atual
+    /// Checks if the task is appropriate for the current energy level
     func isAppropriateFor(currentEnergyLevel: EnergyLevel) -> Bool {
         switch currentEnergyLevel {
         case .high:
-            return true // Pode fazer qualquer tarefa
+            return true // Can do any task
         case .medium:
             return self.energyLevel == .medium || self.energyLevel == .low
         case .low:
@@ -323,32 +323,32 @@ extension Task: Timestamped {}
 
 extension Task {
     
-    /// Dados de exemplo para desenvolvimento e testes
+    /// Sample data for development and testing
     static let sampleTasks: [Task] = [
         Task(
-            title: "Revisar projeto importante",
-            description: "Analisar documentação e preparar apresentação",
+            title: "Review important project",
+            description: "Analyze documentation and prepare presentation",
             energyLevel: .high,
-            purpose: "Crescimento profissional e impacto no trabalho",
-            dueDate: Date().addingTimeInterval(86400 * 2), // 2 dias
-            timeEstimate: 120, // 2 horas
+            purpose: "Professional growth and work impact",
+            dueDate: Date().addingTimeInterval(86400 * 2), // 2 days
+            timeEstimate: 120, // 2 hours
             userId: UUID()
         ),
         Task(
-            title: "Organizar mesa de trabalho",
-            description: "Limpar e organizar o espaço de trabalho",
+            title: "Organize work desk",
+            description: "Clean and organize workspace",
             energyLevel: .medium,
-            purpose: "Criar ambiente mais produtivo",
-            dueDate: Date().addingTimeInterval(86400), // 1 dia
-            timeEstimate: 30, // 30 minutos
+            purpose: "Create more productive environment",
+            dueDate: Date().addingTimeInterval(86400), // 1 day
+            timeEstimate: 30, // 30 minutes
             userId: UUID()
         ),
         Task(
-            title: "Meditar por 10 minutos",
-            description: "Prática de mindfulness para relaxamento",
+            title: "Meditate for 10 minutes",
+            description: "Mindfulness practice for relaxation",
             energyLevel: .low,
-            purpose: "Bem-estar mental e redução do estresse",
-            timeEstimate: 10, // 10 minutos
+            purpose: "Mental well-being and stress reduction",
+            timeEstimate: 10, // 10 minutes
             userId: UUID()
         )
     ]
