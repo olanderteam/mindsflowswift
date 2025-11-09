@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 import Supabase
 
-/// Modelo de usuário
+/// User model
 struct User: Codable, Identifiable {
     let id: UUID
     let email: String?
@@ -22,8 +22,8 @@ struct User: Codable, Identifiable {
     }
 }
 
-/// Manager para gerenciar autenticação com Supabase
-/// Responsável por login, cadastro, sessão e perfil do usuário
+/// Manager to handle authentication with Supabase
+/// Responsible for login, signup, session and user profile
 @MainActor
 class AuthManager: ObservableObject {
     
@@ -44,7 +44,7 @@ class AuthManager: ObservableObject {
     private init() {
         self.supabase = SupabaseManager.shared.supabase
         
-        // Verificar se há sessão ativa ao inicializar
+        // Check if there's an active session on initialization
         _Concurrency.Task {
             await checkAuthStatus()
         }
@@ -52,16 +52,16 @@ class AuthManager: ObservableObject {
     
     // MARK: - Authentication Methods
     
-    /// Verifica o status de autenticação atual
+    /// Checks current authentication status
     func checkAuthStatus() async {
         isLoading = true
         
         do {
-            // Verificar se há sessão ativa no Supabase
+            // Check if there's an active session in Supabase
             let session = try await supabase.auth.session
             
             let authUser = session.user
-            // Criar User a partir do Supabase User
+            // Create User from Supabase User
             let user = User(
                 id: authUser.id,
                 email: authUser.email,
@@ -72,7 +72,7 @@ class AuthManager: ObservableObject {
             self.currentUser = user
             self.isAuthenticated = true
             
-            // Carregar perfil do usuário
+            // Load user profile
             await loadUserProfile()
             
             print("✅ User authenticated: \(authUser.email ?? "unknown")")
@@ -86,10 +86,10 @@ class AuthManager: ObservableObject {
         isLoading = false
     }
     
-    /// Realiza login com email e senha
+    /// Performs login with email and password
     /// - Parameters:
-    ///   - email: Email do usuário
-    ///   - password: Senha do usuário
+    ///   - email: User email
+    ///   - password: User password
     func signIn(email: String, password: String) async throws {
         isLoading = true
         errorMessage = nil
@@ -122,7 +122,7 @@ class AuthManager: ObservableObject {
             print("✅ Sign in successful: \(email)")
             
         } catch {
-            errorMessage = "Erro ao fazer login: \(error.localizedDescription)"
+            errorMessage = "Error logging in: \(error.localizedDescription)"
             print("❌ Sign in failed: \(error)")
             throw error
         }
@@ -130,24 +130,24 @@ class AuthManager: ObservableObject {
         isLoading = false
     }
     
-    /// Realiza cadastro de novo usuário
+    /// Performs signup for new user
     /// - Parameters:
-    ///   - email: Email do usuário
-    ///   - password: Senha do usuário
-    ///   - name: Nome do usuário
+    ///   - email: User email
+    ///   - password: User password
+    ///   - name: User name
     func signUp(email: String, password: String, name: String) async throws {
         isLoading = true
         errorMessage = nil
         
         do {
-            // Criar conta no Supabase
+            // Create account in Supabase
             let response = try await supabase.auth.signUp(
                 email: email,
                 password: password,
                 data: ["name": .string(name)]
             )
             
-            // Criar User a partir do Supabase User
+            // Create User from Supabase User
             let user = User(
                 id: response.user.id,
                 email: response.user.email,
@@ -158,19 +158,19 @@ class AuthManager: ObservableObject {
             self.currentUser = user
             self.isAuthenticated = true
             
-            // Salvar token no Keychain se houver sessão
+            // Save token in Keychain if there's a session
             if let session = response.session {
                 let accessToken = session.accessToken
                 try? keychain.save(accessToken, for: .accessToken)
             }
             
-            // Criar perfil do usuário
+            // Create user profile
             await createUserProfile(for: user.id, name: name)
             
             print("✅ Sign up successful: \(email)")
             
         } catch {
-            errorMessage = "Erro ao criar conta: \(error.localizedDescription)"
+            errorMessage = "Error creating account: \(error.localizedDescription)"
             print("❌ Sign up failed: \(error)")
             throw error
         }
@@ -178,35 +178,35 @@ class AuthManager: ObservableObject {
         isLoading = false
     }
     
-    /// Realiza logout do usuário
+    /// Performs user logout
     func signOut() async throws {
         print("🔄 Starting sign out process...")
         isLoading = true
         errorMessage = nil
         
         do {
-            // Fazer logout no Supabase
+            // Logout from Supabase
             try await supabase.auth.signOut()
             
-            // Garantir que a atualização do estado aconteça na main thread
+            // Ensure state update happens on main thread
             await MainActor.run {
-                // Limpar dados locais
+                // Clear local data
                 self.currentUser = nil
                 self.userProfile = nil
                 self.isAuthenticated = false
                 print("✅ Authentication state cleared: isAuthenticated = \(self.isAuthenticated)")
             }
             
-            // Limpar token do Keychain
+            // Clear token from Keychain
             try? keychain.delete(for: .accessToken)
             
-            // Limpar cache
+            // Clear cache
             CacheManager.shared.clearAllCache()
             
             print("✅ Sign out successful")
             
         } catch {
-            errorMessage = "Erro ao fazer logout: \(error.localizedDescription)"
+            errorMessage = "Error logging out: \(error.localizedDescription)"
             print("❌ Sign out failed: \(error)")
             throw error
         }
@@ -214,8 +214,8 @@ class AuthManager: ObservableObject {
         isLoading = false
     }
     
-    /// Envia email de recuperação de senha
-    /// - Parameter email: Email do usuário
+    /// Sends password recovery email
+    /// - Parameter email: User email
     func resetPassword(email: String) async throws {
         isLoading = true
         errorMessage = nil
@@ -224,7 +224,7 @@ class AuthManager: ObservableObject {
             try await supabase.auth.resetPasswordForEmail(email)
             print("✅ Password reset email sent to: \(email)")
         } catch {
-            errorMessage = "Erro ao enviar email de recuperação: \(error.localizedDescription)"
+            errorMessage = "Error sending recovery email: \(error.localizedDescription)"
             print("❌ Password reset failed: \(error)")
             throw error
         }
@@ -232,8 +232,8 @@ class AuthManager: ObservableObject {
         isLoading = false
     }
     
-    /// Atualiza a senha do usuário
-    /// - Parameter newPassword: Nova senha
+    /// Updates user password
+    /// - Parameter newPassword: New password
     func updatePassword(newPassword: String) async throws {
         isLoading = true
         errorMessage = nil
@@ -242,7 +242,7 @@ class AuthManager: ObservableObject {
             try await supabase.auth.update(user: UserAttributes(password: newPassword))
             print("✅ Password updated successfully")
         } catch {
-            errorMessage = "Erro ao atualizar senha: \(error.localizedDescription)"
+            errorMessage = "Error updating password: \(error.localizedDescription)"
             print("❌ Password update failed: \(error)")
             throw error
         }
@@ -252,12 +252,12 @@ class AuthManager: ObservableObject {
     
     // MARK: - Session Management
     
-    /// Renova a sessão do usuário
+    /// Refreshes user session
     func refreshSession() async throws {
         do {
             let session = try await supabase.auth.session
             
-            // Atualizar token no Keychain
+            // Update token in Keychain
             let accessToken = session.accessToken
             try? keychain.save(accessToken, for: .accessToken)
             
@@ -270,7 +270,7 @@ class AuthManager: ObservableObject {
     
     // MARK: - Profile Management
     
-    /// Carrega o perfil do usuário do Supabase
+    /// Loads user profile from Supabase
     func loadUserProfile() async {
         guard let userId = currentUser?.id else {
             print("⚠️ Cannot load profile: no user ID")
@@ -288,7 +288,7 @@ class AuthManager: ObservableObject {
             if let profile = profiles.first {
                 self.userProfile = profile
                 
-                // Cachear perfil localmente
+                // Cache profile locally
                 try? CacheManager.shared.cacheSingle(profile, for: .profile)
                 
                 print("✅ User profile loaded")
@@ -298,7 +298,7 @@ class AuthManager: ObservableObject {
         } catch {
             print("❌ Failed to load profile: \(error)")
             
-            // Tentar carregar do cache
+            // Try loading from cache
             if let cachedProfile: UserProfile = try? CacheManager.shared.getCachedSingle(for: .profile) {
                 self.userProfile = cachedProfile
                 print("✅ Loaded profile from cache")
@@ -306,8 +306,8 @@ class AuthManager: ObservableObject {
         }
     }
     
-    /// Atualiza o perfil do usuário
-    /// - Parameter profile: Perfil atualizado
+    /// Updates user profile
+    /// - Parameter profile: Updated profile
     func updateUserProfile(_ profile: UserProfile) async throws {
         do {
             let _: UserProfile = try await supabase
@@ -320,7 +320,7 @@ class AuthManager: ObservableObject {
             
             self.userProfile = profile
             
-            // Atualizar cache
+            // Update cache
             try? CacheManager.shared.cacheSingle(profile, for: .profile)
             
             print("✅ Profile updated successfully")
@@ -330,10 +330,10 @@ class AuthManager: ObservableObject {
         }
     }
     
-    /// Cria perfil para novo usuário
+    /// Creates profile for new user
     /// - Parameters:
-    ///   - userId: ID do usuário
-    ///   - name: Nome do usuário
+    ///   - userId: User ID
+    ///   - name: User name
     func createUserProfile(for userId: UUID, name: String) async {
         let newProfile = UserProfile(
             id: userId,
@@ -352,7 +352,7 @@ class AuthManager: ObservableObject {
             
             self.userProfile = newProfile
             
-            // Cachear perfil
+            // Cache profile
             try? CacheManager.shared.cacheSingle(newProfile, for: .profile)
             
             print("✅ User profile created")
@@ -366,12 +366,12 @@ class AuthManager: ObservableObject {
 
 extension AuthManager {
     
-    /// Retorna o ID do usuário atual
+    /// Returns current user ID
     var currentUserId: String? {
         return currentUser?.id.uuidString
     }
     
-    /// Retorna o email do usuário atual
+    /// Returns current user email
     var currentUserEmail: String? {
         return currentUser?.email
     }
