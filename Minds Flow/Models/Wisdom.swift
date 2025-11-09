@@ -8,20 +8,20 @@
 import Foundation
 import SwiftUI
 
-/// Modelo para representar uma entrada de sabedoria/conhecimento pessoal
-/// Biblioteca pessoal de reflexões, aprendizados e insights
+/// Model to represent a wisdom/personal knowledge entry
+/// Personal library of reflections, learnings, and insights
 struct Wisdom: Codable, Identifiable {
     
     // MARK: - Properties
     let id: UUID
-    var title: String?              // NOVO: Título opcional
+    var title: String?              // NEW: Optional title
     var content: String
     var category: WisdomCategory
-    var emotionalTag: Emotion       // Renomeado de emotion para emotionalTag
+    var emotionalTag: Emotion       // Renamed from emotion to emotionalTag
     var tags: [String]
     var createdAt: Date
     var updatedAt: Date
-    let userId: UUID                // Mudado de String para UUID
+    let userId: UUID                // Changed from String to UUID
     
     // MARK: - Supabase Mapping
     enum CodingKeys: String, CodingKey {
@@ -46,7 +46,7 @@ struct Wisdom: Codable, Identifiable {
         category = try container.decode(WisdomCategory.self, forKey: .category)
         emotionalTag = try container.decode(Emotion.self, forKey: .emotionalTag)
         
-        // Decodificar tags que pode estar ausente no banco
+        // Decode tags which may be absent in database
         tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
         
         createdAt = try container.decode(Date.self, forKey: .createdAt)
@@ -110,7 +110,7 @@ struct Wisdom: Codable, Identifiable {
 
 // MARK: - Wisdom Category Enum
 
-/// Categorias para organizar diferentes tipos de sabedoria
+/// Categories to organize different types of wisdom
 enum WisdomCategory: String, CaseIterable, Codable {
     case reflection = "reflection"
     case learning = "learning"
@@ -119,31 +119,31 @@ enum WisdomCategory: String, CaseIterable, Codable {
     case experience = "experience"
     case goal = "goal"
     case gratitude = "gratitude"
-    case personalGrowth = "Personal Growth"  // Compatibilidade com dados existentes
+    case personalGrowth = "Personal Growth"  // Compatibility with existing data
     
-    /// Nome para exibição da categoria
+    /// Display name for category
     var displayName: String {
         switch self {
         case .reflection:
-            return "Reflexão"
+            return "Reflection"
         case .learning:
-            return "Aprendizado"
+            return "Learning"
         case .insight:
             return "Insight"
         case .quote:
-            return "Citação"
+            return "Quote"
         case .experience:
-            return "Experiência"
+            return "Experience"
         case .goal:
-            return "Meta"
+            return "Goal"
         case .gratitude:
-            return "Gratidão"
+            return "Gratitude"
         case .personalGrowth:
-            return "Crescimento Pessoal"
+            return "Personal Growth"
         }
     }
     
-    /// Emoji representativo da categoria
+    /// Representative emoji for category
     var emoji: String {
         switch self {
         case .reflection:
@@ -165,7 +165,7 @@ enum WisdomCategory: String, CaseIterable, Codable {
         }
     }
     
-    /// Ícone SF Symbols da categoria
+    /// SF Symbols icon for category
     var icon: String {
         switch self {
         case .reflection:
@@ -187,7 +187,7 @@ enum WisdomCategory: String, CaseIterable, Codable {
         }
     }
     
-    /// Cor associada à categoria
+    /// Associated color for category
     var color: Color {
         switch self {
         case .reflection:
@@ -212,7 +212,7 @@ enum WisdomCategory: String, CaseIterable, Codable {
 
 // MARK: - Emotion Enum
 
-/// Estados emocionais para contextualizar a sabedoria
+/// Emotional states to contextualize wisdom
 enum Emotion: String, CaseIterable, Codable {
     case calm = "calm"
     case anxious = "anxious"
@@ -227,20 +227,20 @@ enum Emotion: String, CaseIterable, Codable {
     case confused = "confused"
     case inspired = "inspired"
     
-    // Init customizado para aceitar valores capitalizados do banco
+    // Custom init to accept capitalized values from database
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let rawValue = try container.decode(String.self)
         
-        // Tentar com o valor original
+        // Try with original value
         if let emotion = Emotion(rawValue: rawValue) {
             self = emotion
         }
-        // Tentar com lowercase
+        // Try with lowercase
         else if let emotion = Emotion(rawValue: rawValue.lowercased()) {
             self = emotion
         }
-        // Se não encontrar, lançar erro
+        // If not found, throw error
         else {
             throw DecodingError.dataCorruptedError(
                 in: container,
@@ -249,37 +249,37 @@ enum Emotion: String, CaseIterable, Codable {
         }
     }
     
-    /// Nome para exibição da emoção
+    /// Display name for emotion
     var displayName: String {
         switch self {
         case .calm:
-            return "Calmo"
+            return "Calm"
         case .anxious:
-            return "Ansioso"
+            return "Anxious"
         case .creative:
-            return "Criativo"
+            return "Creative"
         case .focused:
-            return "Focado"
+            return "Focused"
         case .dispersed:
-            return "Disperso"
+            return "Dispersed"
         case .motivated:
-            return "Motivado"
+            return "Motivated"
         case .tired:
-            return "Cansado"
+            return "Tired"
         case .happy:
-            return "Feliz"
+            return "Happy"
         case .sad:
-            return "Triste"
+            return "Sad"
         case .grateful:
-            return "Grato"
+            return "Grateful"
         case .confused:
-            return "Confuso"
+            return "Confused"
         case .inspired:
-            return "Inspirado"
+            return "Inspired"
         }
     }
     
-    /// Emoji representativo da emoção
+    /// Representative emoji for emotion
     var emoji: String {
         switch self {
         case .calm:
@@ -309,7 +309,7 @@ enum Emotion: String, CaseIterable, Codable {
         }
     }
     
-    /// Cor associada à emoção
+    /// Associated color for emotion
     var colorName: String {
         switch self {
         case .calm, .grateful:
@@ -327,7 +327,7 @@ enum Emotion: String, CaseIterable, Codable {
         }
     }
     
-    /// Ícone do SF Symbols para a emoção
+    /// SF Symbols icon for emotion
     var icon: String {
         switch self {
         case .calm:
@@ -380,7 +380,7 @@ enum Emotion: String, CaseIterable, Codable {
 
 extension Wisdom {
     
-    /// Atualiza o conteúdo da sabedoria
+    /// Updates the wisdom content
     mutating func update(
         title: String? = nil,
         content: String? = nil,
@@ -396,8 +396,8 @@ extension Wisdom {
         self.updatedAt = Date()
     }
     
-    /// Valida os dados da wisdom
-    /// - Throws: WisdomValidationError se os dados forem inválidos
+    /// Validates the wisdom data
+    /// - Throws: WisdomValidationError if data is invalid
     func validate() throws {
         guard !content.isEmpty else {
             throw WisdomValidationError.emptyContent
@@ -422,7 +422,7 @@ extension Wisdom {
         }
     }
     
-    /// Adiciona uma nova tag
+    /// Adds a new tag
     mutating func addTag(_ tag: String) {
         let cleanTag = tag.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         if !cleanTag.isEmpty && !tags.contains(cleanTag) {
@@ -431,22 +431,22 @@ extension Wisdom {
         }
     }
     
-    /// Remove uma tag
+    /// Removes a tag
     mutating func removeTag(_ tag: String) {
         tags.removeAll { $0 == tag }
         updatedAt = Date()
     }
     
-    /// Verifica se a sabedoria contém uma palavra-chave
+    /// Checks if the wisdom contains a keyword
     func contains(keyword: String) -> Bool {
         let searchText = keyword.lowercased()
         return content.lowercased().contains(searchText) ||
                tags.contains { $0.contains(searchText) }
     }
     
-    /// Verifica se a sabedoria é adequada para o estado emocional atual
+    /// Checks if the wisdom is appropriate for the current emotional state
     func isAppropriateFor(currentEmotion: Emotion) -> Bool {
-        // Lógica para sugerir sabedoria baseada no estado emocional
+        // Logic to suggest wisdom based on emotional state
         switch currentEmotion {
         case .anxious, .sad, .confused:
             return emotion == .calm || emotion == .grateful || category == .gratitude
@@ -472,15 +472,15 @@ enum WisdomValidationError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .emptyContent:
-            return "O conteúdo não pode estar vazio"
+            return "Content cannot be empty"
         case .contentTooShort:
-            return "O conteúdo deve ter pelo menos 10 caracteres"
+            return "Content must be at least 10 characters"
         case .contentTooLong:
-            return "O conteúdo não pode ter mais de 5000 caracteres"
+            return "Content cannot be more than 5000 characters"
         case .emptyTitle:
-            return "O título não pode estar vazio"
+            return "Title cannot be empty"
         case .titleTooLong:
-            return "O título não pode ter mais de 100 caracteres"
+            return "Title cannot be more than 100 characters"
         }
     }
 }
@@ -493,37 +493,37 @@ extension Wisdom: Timestamped {}
 
 extension Wisdom {
     
-    /// Dados de exemplo para desenvolvimento e testes
+    /// Sample data for development and testing
     static let sampleWisdom: [Wisdom] = [
         Wisdom(
-            title: "Reação vs Acontecimento",
-            content: "A vida é 10% do que acontece comigo e 90% de como eu reajo ao que acontece.",
+            title: "Reaction vs Event",
+            content: "Life is 10% what happens to me and 90% how I react to what happens.",
             category: .quote,
             emotionalTag: .inspired,
-            tags: ["vida", "atitude", "reação"],
+            tags: ["life", "attitude", "reaction"],
             userId: UUID()
         ),
         Wisdom(
-            title: "Pequenos Passos",
-            content: "Hoje aprendi que pequenos passos consistentes levam a grandes transformações. Não preciso fazer tudo de uma vez.",
+            title: "Small Steps",
+            content: "Today I learned that consistent small steps lead to great transformations. I don't need to do everything at once.",
             category: .learning,
             emotionalTag: .calm,
-            tags: ["progresso", "consistência", "paciência"],
+            tags: ["progress", "consistency", "patience"],
             userId: UUID()
         ),
         Wisdom(
-            content: "Sou grato por ter saúde, família e a oportunidade de crescer a cada dia.",
+            content: "I'm grateful for having health, family, and the opportunity to grow each day.",
             category: .gratitude,
             emotionalTag: .grateful,
-            tags: ["gratidão", "saúde", "família"],
+            tags: ["gratitude", "health", "family"],
             userId: UUID()
         ),
         Wisdom(
-            title: "Técnica de Respiração",
-            content: "Percebi que quando estou ansioso, respirar profundamente por 5 minutos me ajuda a recuperar o foco.",
+            title: "Breathing Technique",
+            content: "I noticed that when I'm anxious, breathing deeply for 5 minutes helps me regain focus.",
             category: .insight,
             emotionalTag: .focused,
-            tags: ["ansiedade", "respiração", "foco"],
+            tags: ["anxiety", "breathing", "focus"],
             userId: UUID()
         )
     ]
