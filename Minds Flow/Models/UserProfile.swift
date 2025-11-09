@@ -7,24 +7,24 @@
 
 import Foundation
 
-/// Modelo para representar o perfil do usuário no sistema
-/// Contém informações pessoais e preferências do usuário
+/// Model to represent user profile in the system
+/// Contains personal information and user preferences
 struct UserProfile: Codable, Identifiable {
     
     // MARK: - Properties
-    let id: UUID                    // ID do perfil (mesmo que auth.users.id)
+    let id: UUID                    // Profile ID (same as auth.users.id)
     var name: String
-    var avatarUrl: String?          // NOVO: URL do avatar
+    var avatarUrl: String?          // NEW: Avatar URL
     var theme: AppTheme
-    var language: String?           // NOVO: Idioma preferido
+    var language: String?           // NEW: Preferred language
     var createdAt: Date
     var updatedAt: Date
     
-    // REMOVIDO: email (vem de auth.users)
-    // REMOVIDO: currentEnergyLevel (agora em MentalState)
-    // REMOVIDO: currentEmotion (agora em MentalState)
-    // REMOVIDO: isCollapseMode (preferência local do app)
-    // REMOVIDO: userId (id já é o userId)
+    // REMOVED: email (comes from auth.users)
+    // REMOVED: currentEnergyLevel (now in MentalState)
+    // REMOVED: currentEmotion (now in MentalState)
+    // REMOVED: isCollapseMode (local app preference)
+    // REMOVED: userId (id is already the userId)
     
     // MARK: - Supabase Mapping
     enum CodingKeys: String, CodingKey {
@@ -59,25 +59,25 @@ struct UserProfile: Codable, Identifiable {
 
 // MARK: - App Theme Enum
 
-/// Temas disponíveis para o aplicativo
+/// Available themes for the application
 enum AppTheme: String, CaseIterable, Codable {
     case light = "light"
     case dark = "dark"
     case system = "system"
     
-    /// Nome para exibição do tema
+    /// Display name for theme
     var displayName: String {
         switch self {
         case .light:
-            return "Claro"
+            return "Light"
         case .dark:
-            return "Escuro"
+            return "Dark"
         case .system:
-            return "Sistema"
+            return "System"
         }
     }
     
-    /// Ícone representativo do tema
+    /// Representative icon for theme
     var iconName: String {
         switch self {
         case .light:
@@ -96,7 +96,7 @@ enum AppTheme: String, CaseIterable, Codable {
 
 extension UserProfile {
     
-    /// Atualiza o perfil do usuário
+    /// Updates the user profile
     mutating func update(
         name: String? = nil,
         avatarUrl: String? = nil,
@@ -110,8 +110,8 @@ extension UserProfile {
         self.updatedAt = Date()
     }
     
-    /// Valida os dados do perfil
-    /// - Throws: ValidationError se os dados forem inválidos
+    /// Validates the profile data
+    /// - Throws: ValidationError if data is invalid
     func validate() throws {
         guard !name.isEmpty else {
             throw ValidationError.emptyName
@@ -138,7 +138,7 @@ extension UserProfile {
         }
     }
     
-    /// Retorna as iniciais do nome para avatar
+    /// Returns the name initials for avatar
     var initials: String {
         let components = name.components(separatedBy: " ")
         let initials = components.prefix(2).compactMap { $0.first }.map { String($0) }
@@ -149,11 +149,11 @@ extension UserProfile {
 // MARK: - Validation Error Extension
 
 extension ValidationError {
-    static let emptyName = ValidationError.custom("O nome não pode estar vazio")
-    static let nameTooShort = ValidationError.custom("O nome deve ter pelo menos 2 caracteres")
-    static let nameTooLong = ValidationError.custom("O nome não pode ter mais de 100 caracteres")
-    static let invalidAvatarUrl = ValidationError.custom("URL do avatar inválida")
-    static let unsupportedLanguage = ValidationError.custom("Idioma não suportado")
+    static let emptyName = ValidationError.custom("Name cannot be empty")
+    static let nameTooShort = ValidationError.custom("Name must be at least 2 characters")
+    static let nameTooLong = ValidationError.custom("Name cannot be more than 100 characters")
+    static let invalidAvatarUrl = ValidationError.custom("Invalid avatar URL")
+    static let unsupportedLanguage = ValidationError.custom("Unsupported language")
 }
 
 // MARK: - Timestamped Protocol
@@ -164,7 +164,7 @@ extension UserProfile: Timestamped {}
 
 extension UserProfile {
     
-    /// Dados de exemplo para desenvolvimento e testes
+    /// Sample data for development and testing
     static let sampleProfile = UserProfile(
         id: UUID(),
         name: "Gabriel Santos",
