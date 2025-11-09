@@ -8,16 +8,16 @@
 import Foundation
 import SwiftUI
 
-/// Modelo para representar o estado mental do usuário
-/// Registra energia (1-10) e emoção em um momento específico
+/// Model to represent user's mental state
+/// Records energy (1-10) and emotion at a specific moment
 struct MentalState: Codable, Identifiable {
     
     // MARK: - Properties
     let id: UUID
     let userId: UUID
-    var mood: Emotion               // Emoção/humor atual
-    var energy: Int                 // Nível de energia (1-10)
-    var notes: String?              // Notas opcionais
+    var mood: Emotion               // Current emotion/mood
+    var energy: Int                 // Energy level (1-10)
+    var notes: String?              // Optional notes
     let createdAt: Date
     
     // MARK: - Supabase Mapping
@@ -42,12 +42,12 @@ struct MentalState: Codable, Identifiable {
         self.id = id
         self.userId = userId
         self.mood = mood
-        self.energy = min(max(energy, 1), 10) // Garantir entre 1-10
+        self.energy = min(max(energy, 1), 10) // Ensure between 1-10
         self.notes = notes
         self.createdAt = createdAt
     }
     
-    // MARK: - Convenience Initializer (com EnergyLevel)
+    // MARK: - Convenience Initializer (with EnergyLevel)
     init(
         id: UUID = UUID(),
         userId: UUID,
@@ -68,7 +68,7 @@ struct MentalState: Codable, Identifiable {
     
     // MARK: - Computed Properties
     
-    /// Converte energy (int) para EnergyLevel (enum)
+    /// Converts energy (int) to EnergyLevel (enum)
     var energyLevel: EnergyLevel {
         switch energy {
         case 1...3:
@@ -82,45 +82,45 @@ struct MentalState: Codable, Identifiable {
         }
     }
     
-    /// Retorna descrição do nível de energia
+    /// Returns energy level description
     var energyDescription: String {
         return energyLevel.displayName
     }
     
-    /// Retorna cor baseada no estado mental
+    /// Returns color based on mental state
     var stateColor: Color {
         return mood.color
     }
     
-    /// Verifica se o usuário precisa de suporte
+    /// Checks if user needs support
     var needsSupport: Bool {
         let negativeEmotions: [Emotion] = [.anxious, .sad, .confused, .tired]
         return negativeEmotions.contains(mood) || energy <= 3
     }
     
-    /// Retorna recomendação baseada no estado
+    /// Returns recommendation based on state
     var recommendation: String {
         switch (energyLevel, mood) {
         case (.high, .motivated), (.high, .creative):
-            return "Ótimo momento para tarefas desafiadoras!"
+            return "Great time for challenging tasks!"
         case (.high, .anxious):
-            return "Canalize essa energia em atividades físicas."
+            return "Channel this energy into physical activities."
         case (.medium, .focused):
-            return "Estado ideal para tarefas de média complexidade."
+            return "Ideal state for medium complexity tasks."
         case (.low, .calm):
-            return "Perfeito para reflexões e tarefas simples."
+            return "Perfect for reflections and simple tasks."
         case (.low, .tired):
-            return "Que tal descansar ou fazer algo reconfortante?"
+            return "How about resting or doing something comforting?"
         case (_, .sad), (_, .anxious):
-            return "Momento para autocuidado e atividades que trazem paz."
+            return "Time for self-care and activities that bring peace."
         default:
-            return "Escute seu corpo e mente para escolher a melhor atividade."
+            return "Listen to your body and mind to choose the best activity."
         }
     }
     
     // MARK: - Conversion Methods
     
-    /// Converte EnergyLevel para Int (1-10)
+    /// Converts EnergyLevel to Int (1-10)
     static func energyToInt(_ level: EnergyLevel) -> Int {
         switch level {
         case .low:
@@ -132,7 +132,7 @@ struct MentalState: Codable, Identifiable {
         }
     }
     
-    /// Converte Int (1-10) para EnergyLevel
+    /// Converts Int (1-10) to EnergyLevel
     static func intToEnergyLevel(_ value: Int) -> EnergyLevel {
         switch value {
         case 1...3:
@@ -151,7 +151,7 @@ struct MentalState: Codable, Identifiable {
 
 extension MentalState {
     
-    /// Atualiza o estado mental
+    /// Updates the mental state
     mutating func update(
         mood: Emotion? = nil,
         energy: Int? = nil,
@@ -164,8 +164,8 @@ extension MentalState {
         if let notes = notes { self.notes = notes }
     }
     
-    /// Valida os dados do estado mental
-    /// - Throws: ValidationError se os dados forem inválidos
+    /// Validates the mental state data
+    /// - Throws: ValidationError if data is invalid
     func validate() throws {
         guard energy >= 1 && energy <= 10 else {
             throw ValidationError.invalidEnergyValue
@@ -178,14 +178,14 @@ extension MentalState {
         }
     }
     
-    /// Retorna emoji representativo do estado
+    /// Returns representative emoji for state
     var stateEmoji: String {
         return "\(mood.emoji) \(energyLevel.emoji)"
     }
     
-    /// Retorna descrição completa do estado
+    /// Returns full description of state
     var fullDescription: String {
-        var description = "\(mood.displayName) com \(energyDescription)"
+        var description = "\(mood.displayName) with \(energyDescription)"
         if let notes = notes, !notes.isEmpty {
             description += " - \(notes)"
         }
@@ -196,15 +196,15 @@ extension MentalState {
 // MARK: - Validation Error Extension
 
 extension ValidationError {
-    static let invalidEnergyValue = ValidationError.custom("O nível de energia deve estar entre 1 e 10")
-    static let notesTooLong = ValidationError.custom("As notas não podem ter mais de 500 caracteres")
+    static let invalidEnergyValue = ValidationError.custom("Energy level must be between 1 and 10")
+    static let notesTooLong = ValidationError.custom("Notes cannot be more than 500 characters")
 }
 
 // MARK: - Timestamped Protocol
 
 extension MentalState: Timestamped {
     var updatedAt: Date {
-        return createdAt // MentalState é imutável após criação
+        return createdAt // MentalState is immutable after creation
     }
 }
 
@@ -212,51 +212,51 @@ extension MentalState: Timestamped {
 
 extension MentalState {
     
-    /// Dados de exemplo para desenvolvimento e testes
+    /// Sample data for development and testing
     static let sampleStates: [MentalState] = [
         MentalState(
             userId: UUID(),
             mood: .motivated,
             energy: 9,
-            notes: "Acordei muito bem disposto hoje!",
+            notes: "Woke up feeling great today!",
             createdAt: Date()
         ),
         MentalState(
             userId: UUID(),
             mood: .focused,
             energy: 7,
-            notes: "Bom foco para trabalhar",
+            notes: "Good focus for work",
             createdAt: Date().addingTimeInterval(-3600)
         ),
         MentalState(
             userId: UUID(),
             mood: .calm,
             energy: 4,
-            notes: "Momento de relaxar",
+            notes: "Time to relax",
             createdAt: Date().addingTimeInterval(-7200)
         ),
         MentalState(
             userId: UUID(),
             mood: .tired,
             energy: 2,
-            notes: "Preciso descansar",
+            notes: "Need to rest",
             createdAt: Date().addingTimeInterval(-10800)
         )
     ]
     
-    /// Estado de exemplo com energia alta
+    /// Sample state with high energy
     static let highEnergyState = MentalState(
         userId: UUID(),
         mood: .motivated,
         energyLevel: .high,
-        notes: "Pronto para grandes desafios!"
+        notes: "Ready for big challenges!"
     )
     
-    /// Estado de exemplo com energia baixa
+    /// Sample state with low energy
     static let lowEnergyState = MentalState(
         userId: UUID(),
         mood: .tired,
         energyLevel: .low,
-        notes: "Dia cansativo"
+        notes: "Tiring day"
     )
 }
