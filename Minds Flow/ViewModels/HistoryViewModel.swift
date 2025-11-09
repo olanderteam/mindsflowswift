@@ -25,10 +25,24 @@ class HistoryViewModel: ObservableObject {
     private var tasksData: [ChartDataPoint] = []
     private var wisdomData: [ChartDataPoint] = []
     
+    // Dependencies
+    private let supabase = SupabaseManager.shared
+    private let cache = CacheManager.shared
+    
     // MARK: - Initialization
     
     init() {
-        loadSampleData()
+        _Concurrency.Task {
+            // Aguardar autenticação estar completa
+            try? await _Concurrency.Task.sleep(nanoseconds: 1_500_000_000)
+            
+            if AuthManager.shared.isAuthenticated {
+                await loadData()
+            } else {
+                print("⚠️ HistoryViewModel: User not authenticated yet, loading sample data")
+                loadSampleData()
+            }
+        }
     }
     
     // MARK: - Data Loading
@@ -38,11 +52,32 @@ class HistoryViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            // TODO: Implementar carregamento real dos dados do Supabase
-            try await _Concurrency.Task.sleep(nanoseconds: 1_000_000_000) // Simula delay
-            loadSampleData()
+            guard let userId = AuthManager.shared.currentUser?.id else {
+                throw SupabaseError.notAuthenticated
+            }
+            
+            // Carregar dados de estados mentais
+            await loadMentalStatesData(userId: userId)
+            
+            // Carregar dados de tarefas
+            await loadTasksData(userId: userId)
+            
+            // Carregar dados de wisdom
+            await loadWisdomData(userId: userId)
+            
+            // Gerar estatísticas e insights
+            generateSummaryStats()
+            generateInsights()
+            generateDetailedHistory()
+            
+            print("✅ History data loaded successfully")
+            
         } catch {
+            print("❌ Failed to load history data: \(error)")
             errorMessage = "Erro ao carregar histórico: \(error.localizedDescription)"
+            
+            // Fallback para dados de exemplo
+            loadSampleData()
         }
         
         isLoading = false
@@ -50,6 +85,280 @@ class HistoryViewModel: ObservableObject {
     
     func loadData(for timeRange: TimeRange) async {
         await loadData()
+    }
+    
+    // MARK: - Private Data Loading Methods
+    
+    private func loadMentalStatesData(userId: UUID) async {
+        do {
+            // Buscar estados mentais dos últimos 365 dias
+            let startDate = Calendar.current.date(byAdding: .day, value: -365, to: Date())!
+            
+            let query = SupabaseQuery
+                .userId(userId)
+                .orderBy("created_at", descending: false)
+            
+            let states: [MentalState] = try await supabase.fetch(from: "mental_states", query: query)
+            
+            // Filtrar últimos 365 dias
+            let filteredStates = states.filter { $0.createdAt >= startDate }
+            
+            // Converter para dados de gráfico
+            energyData = filteredStates.map { state in
+                ChartDataPoint(date: state.createdAt, value: Double(state.energy))
+            }
+            
+            // Mapear emoções para valores numéricos (1-10)
+            emotionData = filteredStates.map { state in
+                let emotionValue = emotionToValue(state.mood)
+                return ChartDataPoint(date: state.createdAt, value: emotionValue)
+            }
+            
+            print("✅ Loaded \(filteredStates.count) mental states")
+            
+        } catch {
+            print("❌ Failed to load mental states: \(error)")
+        }
+    }
+    
+    private func loadTasksData(userId: UUID) async {
+        do {
+            let startDate = Calendar.current.date(byAdding: .day, value: -365, to: Date())!
+            
+            let query = SupabaseQuery
+                .userId(userId)
+                .orderBy("created_at", descending: false)
+            
+            let tasks: [Task] = try await supabase.fetch(from: "tasks", query: query)
+            
+            // Agrupar tarefas por dia
+            let calendar = Calendar.current
+            var tasksByDay: [Date: Int] = [:]
+            
+            for task in tasks where task.createdAt >= startDate {
+                let dayStart = calendar.startOfDay(for: task.createdAt)
+                tasksByDay[dayStart, default: 0] += 1
+            }
+            
+            // Converter para dados de gráfico
+            tasksData = tasksByDay.map { date, count in
+                ChartDataPoint(date: date, value: Double(count))
+            }.sorted { $0.date < $1.date }
+            
+            print("✅ Loaded \(tasks.count) tasks")
+            
+        } catch {
+            print("❌ Failed to load tasks: \(error)")
+        }
+    }
+    
+    private func loadWisdomData(userId: UUID) async {
+        do {
+            let startDate = Calendar.current.date(byAdding: .day, value: -365, to: Date())!
+            
+            let query = SupabaseQuery
+                .userId(userId)
+                .orderBy("created_at", descending: false)
+            
+            let wisdomEntries: [Wisdom] = try await supabase.fetch(from: "wisdom_entries", query: query)
+            
+            // Agrupar wisdom por dia
+            let calendar = Calendar.current
+            var wisdomByDay: [Date: Int] = [:]
+            
+            for wisdom in wisdomEntries where wisdom.createdAt >= startDate {
+                let dayStart = calendar.startOfDay(for: wisdom.createdAt)
+                wisdomByDay[dayStart, default: 0] += 1
+            }
+            
+            // Converter para dados de gráfico
+            wisdomData = wisdomByDay.map { date, count in
+                ChartDataPoint(date: date, value: Double(count))
+            }.sorted { $0.date < $1.date }
+            
+            print("✅ Loaded \(wisdomEntries.count) wisdom entries")
+            
+        } catch {
+            print("❌ Failed to load wisdom: \(error)")
+        }
+    }
+    
+    // MARK: - Data Generation Methods
+    
+    private func generateSummaryStats() {
+        let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+        let twoWeeksAgo = Calendar.current.date(byAdding: .day, value: -14, to: Date())!
+        
+        // Energia média
+        let recentEnergy = energyData.filter { $0.date >= weekAgo }
+        let previousEnergy = energyData.filter { $0.date >= twoWeeksAgo && $0.date < weekAgo }
+        let avgEnergy = recentEnergy.isEmpty ? 0 : recentEnergy.map { $0.value }.reduce(0, +) / Double(recentEnergy.count)
+        let prevAvgEnergy = previousEnergy.isEmpty ? 0 : previousEnergy.map { $0.value }.reduce(0, +) / Double(previousEnergy.count)
+        let energyChange = prevAvgEnergy == 0 ? 0 : ((avgEnergy - prevAvgEnergy) / prevAvgEnergy) * 100
+        
+        // Emoção média
+        let recentEmotion = emotionData.filter { $0.date >= weekAgo }
+        let previousEmotion = emotionData.filter { $0.date >= twoWeeksAgo && $0.date < weekAgo }
+        let avgEmotion = recentEmotion.isEmpty ? 0 : recentEmotion.map { $0.value }.reduce(0, +) / Double(recentEmotion.count)
+        let prevAvgEmotion = previousEmotion.isEmpty ? 0 : previousEmotion.map { $0.value }.reduce(0, +) / Double(previousEmotion.count)
+        let emotionChange = prevAvgEmotion == 0 ? 0 : ((avgEmotion - prevAvgEmotion) / prevAvgEmotion) * 100
+        
+        // Tarefas
+        let recentTasks = tasksData.filter { $0.date >= weekAgo }
+        let previousTasks = tasksData.filter { $0.date >= twoWeeksAgo && $0.date < weekAgo }
+        let totalTasks = Int(recentTasks.map { $0.value }.reduce(0, +))
+        let prevTotalTasks = Int(previousTasks.map { $0.value }.reduce(0, +))
+        let tasksChange = prevTotalTasks == 0 ? 0 : Double((totalTasks - prevTotalTasks)) / Double(prevTotalTasks) * 100
+        
+        // Wisdom
+        let recentWisdom = wisdomData.filter { $0.date >= weekAgo }
+        let previousWisdom = wisdomData.filter { $0.date >= twoWeeksAgo && $0.date < weekAgo }
+        let totalWisdom = Int(recentWisdom.map { $0.value }.reduce(0, +))
+        let prevTotalWisdom = Int(previousWisdom.map { $0.value }.reduce(0, +))
+        let wisdomChange = prevTotalWisdom == 0 ? 0 : Double((totalWisdom - prevTotalWisdom)) / Double(prevTotalWisdom) * 100
+        
+        summaryStats = [
+            SummaryStatistic(
+                title: "Energia Média",
+                value: String(format: "%.1f", avgEnergy),
+                subtitle: String(format: "%+.0f%% vs semana anterior", energyChange),
+                color: .blue,
+                icon: "bolt.fill"
+            ),
+            SummaryStatistic(
+                title: "Emoção Média",
+                value: String(format: "%.1f", avgEmotion),
+                subtitle: String(format: "%+.0f%% vs semana anterior", emotionChange),
+                color: .purple,
+                icon: "heart.fill"
+            ),
+            SummaryStatistic(
+                title: "Tarefas Criadas",
+                value: "\(totalTasks)",
+                subtitle: String(format: "%+.0f%% vs semana anterior", tasksChange),
+                color: .green,
+                icon: "checkmark.circle.fill"
+            ),
+            SummaryStatistic(
+                title: "Sabedorias Adicionadas",
+                value: "\(totalWisdom)",
+                subtitle: String(format: "%+.0f%% vs semana anterior", wisdomChange),
+                color: .orange,
+                icon: "lightbulb.fill"
+            )
+        ]
+    }
+    
+    private func generateInsights() {
+        var newInsights: [GrowthInsight] = []
+        
+        // Análise de tendência de energia
+        let energyTrend = calculateTrend(for: .energy)
+        if energyTrend == .up {
+            newInsights.append(GrowthInsight(
+                id: UUID(),
+                type: .positive,
+                title: "Tendência Positiva de Energia",
+                description: "Sua energia tem aumentado consistentemente. Continue com os hábitos atuais!",
+                icon: "arrow.up.circle.fill"
+            ))
+        } else if energyTrend == .down {
+            newInsights.append(GrowthInsight(
+                id: UUID(),
+                type: .negative,
+                title: "Energia em Declínio",
+                description: "Sua energia tem diminuído. Considere revisar seus hábitos de sono e alimentação.",
+                icon: "arrow.down.circle.fill"
+            ))
+        }
+        
+        // Análise de produtividade
+        let recentTasks = tasksData.filter { $0.date >= Calendar.current.date(byAdding: .day, value: -7, to: Date())! }
+        let avgTasksPerDay = recentTasks.isEmpty ? 0 : recentTasks.map { $0.value }.reduce(0, +) / Double(recentTasks.count)
+        
+        if avgTasksPerDay > 3 {
+            newInsights.append(GrowthInsight(
+                id: UUID(),
+                type: .positive,
+                title: "Alta Produtividade",
+                description: "Você está criando uma média de \(String(format: "%.1f", avgTasksPerDay)) tarefas por dia. Excelente!",
+                icon: "star.circle.fill"
+            ))
+        }
+        
+        // Sugestão baseada em dados
+        if !energyData.isEmpty && !tasksData.isEmpty {
+            newInsights.append(GrowthInsight(
+                id: UUID(),
+                type: .suggestion,
+                title: "Otimize Seu Tempo",
+                description: "Planeje tarefas importantes quando sua energia estiver alta para melhor produtividade.",
+                icon: "lightbulb.circle.fill"
+            ))
+        }
+        
+        insights = newInsights
+    }
+    
+    private func generateDetailedHistory() {
+        var entries: [HistoryEntry] = []
+        
+        // Adicionar últimas atualizações de energia
+        if let latestEnergy = energyData.last {
+            entries.append(HistoryEntry(
+                id: UUID(),
+                date: latestEnergy.date,
+                type: .energy,
+                title: "Energia Atualizada",
+                description: "Nível de energia registrado",
+                value: "\(Int(latestEnergy.value))/10"
+            ))
+        }
+        
+        // Adicionar últimas tarefas
+        let recentTasks = tasksData.suffix(3)
+        for taskData in recentTasks {
+            entries.append(HistoryEntry(
+                id: UUID(),
+                date: taskData.date,
+                type: .task,
+                title: "Tarefas Criadas",
+                description: "\(Int(taskData.value)) tarefa(s) criada(s)",
+                value: "\(Int(taskData.value))"
+            ))
+        }
+        
+        // Adicionar últimas wisdom
+        let recentWisdom = wisdomData.suffix(3)
+        for wisdomData in recentWisdom {
+            entries.append(HistoryEntry(
+                id: UUID(),
+                date: wisdomData.date,
+                type: .wisdom,
+                title: "Sabedorias Adicionadas",
+                description: "\(Int(wisdomData.value)) sabedoria(s) adicionada(s)",
+                value: "\(Int(wisdomData.value))"
+            ))
+        }
+        
+        // Ordenar por data (mais recentes primeiro)
+        detailedHistory = entries.sorted { $0.date > $1.date }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func emotionToValue(_ emotion: Emotion) -> Double {
+        // Mapear emoções para valores de 1-10
+        switch emotion {
+        case .happy, .grateful, .inspired, .motivated:
+            return 9.0
+        case .calm, .focused, .creative:
+            return 7.0
+        case .tired, .dispersed:
+            return 4.0
+        case .anxious, .sad, .confused:
+            return 3.0
+        }
     }
     
     // MARK: - Chart Data
