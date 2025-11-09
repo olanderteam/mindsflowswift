@@ -8,8 +8,8 @@
 import Foundation
 import SwiftUI
 
-/// ViewModel para gerenciar a lógica de login
-/// Implementa o padrão MVVM para separar lógica de negócio da UI
+/// ViewModel to manage login logic
+/// Implements MVVM pattern to separate business logic from UI
 @MainActor
 class LoginViewModel: ObservableObject {
     
@@ -25,7 +25,7 @@ class LoginViewModel: ObservableObject {
     
     // MARK: - Computed Properties
     
-    /// Verifica se o formulário é válido
+    /// Checks if o formulário é válido
     var isFormValid: Bool {
         return isValidEmail(email) && password.count >= 6
     }
@@ -79,9 +79,9 @@ class LoginViewModel: ObservableObject {
         } else if error.localizedDescription.contains("Too many requests") {
             message = "Muitas tentativas. Tente novamente em alguns minutos."
         } else if error.localizedDescription.contains("Network") {
-            message = "Erro de conexão. Verifique sua internet."
+            message = "Connection error. Check your internet."
         } else {
-            message = "Erro ao fazer login. Tente novamente."
+            message = "Error logging in. Please try again."
         }
         
         showErrorMessage(message)

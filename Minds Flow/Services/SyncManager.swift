@@ -60,7 +60,7 @@ class SyncManager: ObservableObject {
         }
     }
     
-    /// Salva fila de operações no armazenamento persistente
+    /// Saves fila de operações no armazenamento persistente
     private func saveQueue() {
         do {
             let encoder = JSONEncoder()
@@ -217,7 +217,7 @@ class SyncManager: ObservableObject {
         
         print("🔄 Retrying \(syncErrors.count) failed operations...")
         
-        // Adicionar operações falhadas de volta à fila
+        // Add failed operations back to queue
         for error in syncErrors {
             if !syncQueue.contains(where: { $0.id == error.operation.id }) {
                 syncQueue.append(error.operation)
@@ -326,9 +326,9 @@ extension SyncManager {
     
     /// Cria operação de atualização
     /// - Parameters:
-    ///   - object: Objeto a ser atualizado
-    ///   - table: Nome da tabela
-    ///   - id: ID do registro
+    ///   - object: Object to be updated
+    ///   - table: Table name
+    ///   - id: Record ID
     /// - Returns: SyncOperation
     func createUpdateOperation<T: Codable>(_ object: T, in table: String, id: UUID) throws -> SyncOperation {
         let encoder = JSONEncoder()
@@ -343,10 +343,10 @@ extension SyncManager {
         )
     }
     
-    /// Cria operação de deleção
+    /// Creates deletion operation
     /// - Parameters:
-    ///   - id: ID do registro a ser deletado
-    ///   - table: Nome da tabela
+    ///   - id: ID of record to be deleted
+    ///   - table: Table name
     /// - Returns: SyncOperation
     func createDeleteOperation(id: UUID, from table: String) -> SyncOperation {
         return SyncOperation(

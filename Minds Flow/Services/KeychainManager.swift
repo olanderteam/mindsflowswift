@@ -8,7 +8,7 @@
 import Foundation
 import Security
 
-/// Gerenciador de armazenamento seguro no Keychain
+/// Manager for secure Keychain storage
 /// Armazena tokens e dados sensíveis de forma criptografada
 class KeychainManager {
     
@@ -27,10 +27,10 @@ class KeychainManager {
     
     // MARK: - Save
     
-    /// Salva um valor no Keychain
+    /// Saves um valor no Keychain
     /// - Parameters:
     ///   - value: Valor a ser salvo
-    ///   - key: Chave do Keychain
+    ///   - key: Keychain key
     func save(_ value: String, for key: KeychainKey) throws {
         guard let data = value.data(using: .utf8) else {
             throw KeychainError.invalidData
@@ -39,7 +39,7 @@ class KeychainManager {
         // Deletar valor existente primeiro
         try? delete(for: key)
         
-        // Criar query para adicionar
+        // Create query to add
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key.rawValue,
@@ -58,8 +58,8 @@ class KeychainManager {
     
     // MARK: - Retrieve
     
-    /// Recupera um valor do Keychain
-    /// - Parameter key: Chave do Keychain
+    /// Retrieves um valor do Keychain
+    /// - Parameter key: Keychain key
     /// - Returns: Valor armazenado ou nil
     func retrieve(for key: KeychainKey) throws -> String? {
         let query: [String: Any] = [
@@ -90,7 +90,7 @@ class KeychainManager {
     // MARK: - Delete
     
     /// Deleta um valor do Keychain
-    /// - Parameter key: Chave do Keychain
+    /// - Parameter key: Keychain key
     func delete(for key: KeychainKey) throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -118,8 +118,8 @@ class KeychainManager {
     
     // MARK: - Check Existence
     
-    /// Verifica se existe um valor para a chave
-    /// - Parameter key: Chave do Keychain
+    /// Checks if existe um valor para a chave
+    /// - Parameter key: Keychain key
     /// - Returns: true se existe
     func exists(for key: KeychainKey) -> Bool {
         return (try? retrieve(for: key)) != nil

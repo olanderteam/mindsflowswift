@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// Tela de login do usuário
-/// Permite autenticação com email e senha
+/// User login screen
+/// Allows authentication with email and password
 struct LoginView: View {
     
     // MARK: - Properties
@@ -44,7 +44,7 @@ struct LoginView: View {
             )
             .navigationBarHidden(true)
         }
-        .alert("Erro", isPresented: $viewModel.showError) {
+        .alert("Error", isPresented: $viewModel.showError) {
             Button("OK") { }
         } message: {
             Text(viewModel.errorMessage)
@@ -69,7 +69,7 @@ struct LoginView: View {
                 .foregroundColor(.primary)
             
             // Subtitle
-            Text("Organize sua mente, flua com propósito")
+            Text("Organize your mind, flow with purpose")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -84,15 +84,15 @@ struct LoginView: View {
             CustomTextField(
                 title: "Email",
                 text: $viewModel.email,
-                placeholder: "seu@email.com",
+                placeholder: "your@email.com",
                 keyboardType: .emailAddress
             )
             
             // Password Field
             CustomSecureField(
-                title: "Senha",
+                title: "Password",
                 text: $viewModel.password,
-                placeholder: "Digite sua senha"
+                placeholder: "Enter your password"
             )
         }
     }
@@ -113,7 +113,7 @@ struct LoginView: View {
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             .scaleEffect(0.8)
                     } else {
-                        Text("Entrar")
+                        Text("Sign In")
                             .fontWeight(.semibold)
                     }
                 }
@@ -131,9 +131,9 @@ struct LoginView: View {
                 showSignUp = true
             }) {
                 HStack {
-                    Text("Não tem conta?")
+                    Text("Don't have an account?")
                         .foregroundColor(.secondary)
-                    Text("Cadastre-se")
+                    Text("Sign Up")
                         .fontWeight(.semibold)
                         .foregroundColor(.blue)
                 }

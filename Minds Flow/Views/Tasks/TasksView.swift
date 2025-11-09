@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View principal para gerenciamento de tarefas
+/// Main view for task management
 struct TasksView: View {
     @StateObject private var viewModel = TasksViewModel()
     @State private var showingAddTask = false
@@ -17,19 +17,19 @@ struct TasksView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Header com estatísticas
+                // Header with statistics
                 if !viewModel.tasks.isEmpty {
                     headerSection
                         .padding()
                         .background(Color(.systemGray6))
                 }
                 
-                // Lista de tarefas
+                // Tasks list
                 tasksList
             }
-            .navigationTitle("Tarefas")
+            .navigationTitle("Tasks")
             .navigationBarTitleDisplayMode(.large)
-            .searchable(text: $searchText, prompt: "Buscar tarefas...")
+            .searchable(text: $searchText, prompt: "Search tasks...")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: { showingFilters = true }) {
@@ -52,7 +52,7 @@ struct TasksView: View {
             .refreshable {
                 await viewModel.loadTasks()
             }
-            .alert("Erro", isPresented: $viewModel.showError) {
+            .alert("Error", isPresented: $viewModel.showError) {
                 Button("OK") { }
             } message: {
                 Text(viewModel.errorMessage)
@@ -68,11 +68,11 @@ struct TasksView: View {
         }
     }
     
-    // MARK: - Header com Estatísticas
+    // MARK: - Header with Statistics
     
     private var headerSection: some View {
         VStack(spacing: 12) {
-            // Estatísticas principais
+            // Main statistics
             HStack(spacing: 16) {
                 StatisticCard(
                     title: "Total",
@@ -106,7 +106,7 @@ struct TasksView: View {
     private var activeFiltersSection: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                Button("Limpar filtros") {
+                Button("Clear filters") {
                     viewModel.clearFilters()
                 }
                 .font(.caption)
@@ -116,12 +116,12 @@ struct TasksView: View {
         }
     }
     
-    // MARK: - Lista de Tarefas
+    // MARK: - Tasks List
     
     private var tasksList: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView("Carregando tarefas...")
+                ProgressView("Loading tasks...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if viewModel.filteredTasks.isEmpty {
                 emptyStateView
@@ -150,17 +150,17 @@ struct TasksView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.gray)
             
-            Text(viewModel.tasks.isEmpty ? "Nenhuma tarefa ainda" : "Nenhuma tarefa encontrada")
+            Text(viewModel.tasks.isEmpty ? "No tasks yet" : "No tasks found")
                 .font(.title2)
                 .fontWeight(.medium)
             
-            Text(viewModel.tasks.isEmpty ? "Adicione sua primeira tarefa para começar" : "Tente ajustar os filtros ou busca")
+            Text(viewModel.tasks.isEmpty ? "Add your first task to get started" : "Try adjusting filters or search")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
             
             if viewModel.tasks.isEmpty {
-                Button("Adicionar Tarefa") {
+                Button("Add Task") {
                     showingAddTask = true
                 }
                 .buttonStyle(.borderedProminent)
@@ -184,7 +184,7 @@ struct TasksView: View {
 
 // MARK: - Supporting Views
 
-/// Card para estatísticas
+/// Card for statistics
 struct StatisticCard: View {
     let title: String
     let value: String
@@ -208,7 +208,7 @@ struct StatisticCard: View {
     }
 }
 
-/// Row individual de tarefa
+/// Individual task row
 struct TaskRowView: View {
     let task: Task
     let onToggleCompletion: () -> Void
@@ -223,7 +223,7 @@ struct TaskRowView: View {
             }
             .buttonStyle(PlainButtonStyle())
             
-            // Conteúdo da tarefa
+            // Task content
             VStack(alignment: .leading, spacing: 4) {
                 Text(task.title)
                     .font(.subheadline)
@@ -238,9 +238,9 @@ struct TaskRowView: View {
                         .lineLimit(2)
                 }
                 
-                // Metadados
+                // Metadata
                 HStack(spacing: 12) {
-                    // Nível de energia
+                    // Energy level
                     HStack(spacing: 2) {
                         Image(systemName: task.energyLevel.icon)
                         Text(task.energyLevel.displayName)
@@ -286,7 +286,7 @@ struct TaskRowView: View {
     }
 }
 
-/// Chip para filtros ativos
+/// Chip for active filters
 struct TaskFilterChip: View {
     let text: String
     let onRemove: () -> Void

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para adicionar nova entrada de wisdom
+/// View to add new wisdom entry
 struct AddWisdomView: View {
     @ObservedObject var viewModel: WisdomViewModel
     @Environment(\.dismiss) private var dismiss
@@ -46,23 +46,23 @@ struct AddWisdomView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Nova Wisdom")
+            .navigationTitle("New Wisdom")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Salvar") {
+                    Button("Save") {
                         saveWisdom()
                     }
                     .disabled(!isFormValid || isLoading)
                 }
             }
-            .alert("Erro", isPresented: $showError) {
+            .alert("Error", isPresented: $showError) {
                 Button("OK") { }
             } message: {
                 Text(errorMessage)
@@ -78,11 +78,11 @@ struct AddWisdomView: View {
                 .font(.system(size: 40))
                 .foregroundColor(.yellow)
             
-            Text("Capture seus insights")
+            Text("Capture your insights")
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("Registre reflexões, aprendizados e momentos de sabedoria")
+            Text("Record reflections, learnings and moments of wisdom")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

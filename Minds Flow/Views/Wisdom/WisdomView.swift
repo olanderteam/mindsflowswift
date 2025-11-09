@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View principal do sistema Wisdom - Biblioteca pessoal de conhecimentos
+/// Main view do sistema Wisdom - Biblioteca pessoal de conhecimentos
 struct WisdomView: View {
     @StateObject private var viewModel = WisdomViewModel()
     @State private var showingAddWisdom = false
@@ -47,7 +47,7 @@ struct WisdomView: View {
             .sheet(item: $selectedWisdom) { wisdom in
                 WisdomDetailView(wisdom: wisdom, viewModel: viewModel)
             }
-            .alert("Erro", isPresented: $viewModel.showError) {
+            .alert("Error", isPresented: $viewModel.showError) {
                 Button("OK") { }
             } message: {
                 Text(viewModel.errorMessage)
@@ -64,7 +64,7 @@ struct WisdomView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.secondary)
                 
-                TextField("Buscar wisdom...", text: $viewModel.searchText)
+                TextField("Search wisdom...", text: $viewModel.searchText)
                     .textFieldStyle(PlainTextFieldStyle())
                     .onChange(of: viewModel.searchText) { newValue in
                         viewModel.updateSearchText(newValue)
@@ -102,7 +102,7 @@ struct WisdomView: View {
                 
                 Spacer()
                 
-                // Estatísticas rápidas
+                // Quick statistics
                 HStack(spacing: 16) {
                     StatView(
                         title: "Total",
@@ -127,7 +127,7 @@ struct WisdomView: View {
     private var activeFiltersView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                // Filtro de categoria
+                // Category filter
                 if let category = viewModel.selectedCategory {
                     FilterChip(
                         title: category.displayName,
@@ -136,7 +136,7 @@ struct WisdomView: View {
                     )
                 }
                 
-                // Filtro de emoção
+                // Emotion filter
                 if let emotion = viewModel.selectedEmotion {
                     FilterChip(
                         title: emotion.displayName,
@@ -145,7 +145,7 @@ struct WisdomView: View {
                     )
                 }
                 
-                // Filtros de tags
+                // Tag filters
                 ForEach(Array(viewModel.selectedTags), id: \.self) { tag in
                     FilterChip(
                         title: tag,
@@ -154,9 +154,9 @@ struct WisdomView: View {
                     )
                 }
                 
-                // Botão limpar filtros
+                // Clear filters button
                 if hasActiveFilters {
-                    Button("Limpar") {
+                    Button("Clear") {
                         viewModel.clearFilters()
                     }
                     .font(.caption)
@@ -209,19 +209,19 @@ struct WisdomView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.secondary)
             
-            Text(viewModel.wisdomEntries.isEmpty ? "Sua biblioteca está vazia" : "Nenhum resultado encontrado")
+            Text(viewModel.wisdomEntries.isEmpty ? "Your library is empty" : "No results found")
                 .font(.title2)
                 .fontWeight(.medium)
             
             Text(viewModel.wisdomEntries.isEmpty ? 
-                 "Comece adicionando seus primeiros insights e reflexões" :
-                 "Tente ajustar os filtros ou buscar por outros termos")
+                 "Start by adding your first insights and reflections" :
+                 "Try adjusting filters or searching for other terms")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
             
             if viewModel.wisdomEntries.isEmpty {
-                Button("Adicionar Wisdom") {
+                Button("Add Wisdom") {
                     showingAddWisdom = true
                 }
                 .buttonStyle(.borderedProminent)
@@ -250,7 +250,7 @@ struct WisdomView: View {
 
 // MARK: - Supporting Views
 
-/// View para estatísticas rápidas
+/// View for quick statistics
 struct StatView: View {
     let title: String
     let value: String
@@ -305,7 +305,7 @@ struct WisdomRowView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Header com categoria e emoção
+            // Header with category and emotion
             HStack {
                 HStack(spacing: 4) {
                     Image(systemName: wisdom.category.icon)
@@ -333,7 +333,7 @@ struct WisdomRowView: View {
                 .font(.body)
                 .lineLimit(3)
             
-            // Tags e data
+            // Tags and date
             HStack {
                 if !wisdom.tags.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {

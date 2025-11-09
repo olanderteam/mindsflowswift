@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para filtros avançados de tarefas
+/// View to advanced filters de tarefas
 struct TaskFiltersView: View {
     @ObservedObject var viewModel: TasksViewModel
     @Environment(\.dismiss) private var dismiss
@@ -41,7 +41,7 @@ struct TaskFiltersView: View {
                     // Opções adicionais
                     additionalOptionsSection
                     
-                    // Estatísticas dos filtros
+                    // Filter statistics
                     filterStatsSection
                     
                     // Sugestões de filtros
@@ -49,17 +49,17 @@ struct TaskFiltersView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Filtros")
+            .navigationTitle("Filters")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Limpar") {
+                    Button("Clear") {
                         clearAllFilters()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Aplicar") {
+                    Button("Apply") {
                         applyFilters()
                     }
                     .fontWeight(.semibold)
@@ -112,7 +112,7 @@ struct TaskFiltersView: View {
                 Spacer()
                 
                 if !selectedEnergyLevels.isEmpty {
-                    Button("Limpar") {
+                    Button("Clear") {
                         selectedEnergyLevels.removeAll()
                     }
                     .font(.caption)
@@ -251,7 +251,7 @@ struct TaskFiltersView: View {
     // MARK: - Actions
     
     private func applyFilters() {
-        // Aplicar filtro de energia se houver seleção
+        // Apply energy filter if there's a selection
         if let energyLevel = selectedEnergyLevels.first {
             viewModel.setEnergyFilter(energyLevel)
         } else {
@@ -421,7 +421,7 @@ struct DateRangeFilterCard: View {
     }
 }
 
-/// Card para estatísticas de filtros
+/// Card for filter statistics
 struct TaskFilterStatCard: View {
     let title: String
     let value: String

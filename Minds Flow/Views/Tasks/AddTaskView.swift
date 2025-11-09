@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para adicionar nova tarefa
+/// View to add new task
 struct AddTaskView: View {
     @ObservedObject var viewModel: TasksViewModel
     @Environment(\.dismiss) private var dismiss
@@ -28,7 +28,7 @@ struct AddTaskView: View {
                     // Formulário principal
                     formSection
                     
-                    // Configurações avançadas
+                    // Advanced settings
                     advancedSection
                     
                     // Preview da tarefa
@@ -38,17 +38,17 @@ struct AddTaskView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Nova Tarefa")
+            .navigationTitle("New Task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Criar") {
+                    Button("Create") {
                         createTask()
                     }
                     .disabled(title.isEmpty || isCreating)
@@ -61,7 +61,7 @@ struct AddTaskView: View {
     
     private var headerSection: some View {
         VStack(spacing: 12) {
-            Text("Criar Nova Tarefa")
+            Text("Create New Task")
                 .font(.title2)
                 .fontWeight(.semibold)
             
@@ -85,7 +85,7 @@ struct AddTaskView: View {
                         .font(.headline)
                 }
                 
-                TextField("Ex: Revisar projeto, Meditar 10 min, Estudar Swift...", text: $title)
+                TextField("Ex: Review project, Meditate 10 min, Study Swift...", text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 
                 Text("\(title.count)/100")
@@ -103,7 +103,7 @@ struct AddTaskView: View {
                         .font(.headline)
                 }
                 
-                TextField("Detalhes sobre a tarefa, contexto ou observações...", text: $description, axis: .vertical)
+                TextField("Details about the task, context or observations...", text: $description, axis: .vertical)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .lineLimit(3...6)
                 
@@ -271,7 +271,7 @@ struct TaskPreviewCard: View {
                     .lineLimit(3)
             }
             
-            // Metadados
+            // Metadata
             HStack(spacing: 12) {
                 // Nível de energia
                 HStack(spacing: 2) {

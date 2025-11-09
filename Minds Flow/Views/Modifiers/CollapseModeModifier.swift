@@ -21,7 +21,7 @@ struct CollapseModeModifier: ViewModifier {
     }
 }
 
-/// Environment key para configuração do modo colapso
+/// Environment key for collapse mode configuration
 struct CollapseModeEnvironmentKey: EnvironmentKey {
     static let defaultValue = UIConfiguration(
         isCollapseMode: false,

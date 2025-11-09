@@ -101,7 +101,7 @@ class AuthManager: ObservableObject {
                 password: password
             )
             
-            // Criar User a partir do Supabase User
+            // Create User from Supabase User
             let user = User(
                 id: session.user.id,
                 email: session.user.email,
@@ -112,11 +112,11 @@ class AuthManager: ObservableObject {
             self.currentUser = user
             self.isAuthenticated = true
             
-            // Salvar token no Keychain
+            // Save token to Keychain
             let accessToken = session.accessToken
             try? keychain.save(accessToken, for: .accessToken)
             
-            // Carregar perfil do usuário
+            // Load user profile
             await loadUserProfile()
             
             print("✅ Sign in successful: \(email)")

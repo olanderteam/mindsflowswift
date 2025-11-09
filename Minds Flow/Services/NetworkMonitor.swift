@@ -8,8 +8,8 @@
 import Foundation
 import Network
 
-/// Monitor de conectividade de rede
-/// Detecta mudanças no status da conexão e notifica observers
+/// Network connectivity monitor
+/// Detects changes in connection status and notifies observers
 @MainActor
 class NetworkMonitor: ObservableObject {
     
@@ -36,11 +36,11 @@ class NetworkMonitor: ObservableObject {
             case .wifi:
                 return "Wi-Fi"
             case .cellular:
-                return "Celular"
+                return "Cellular"
             case .wired:
                 return "Ethernet"
             case .unknown:
-                return "Desconhecido"
+                return "Unknown"
             }
         }
         
@@ -66,7 +66,7 @@ class NetworkMonitor: ObservableObject {
     
     // MARK: - Monitoring
     
-    /// Inicia o monitoramento de rede
+    /// Starts network monitoring
     func startMonitoring() {
         monitor.pathUpdateHandler = { [weak self] path in
             _Concurrency.Task { @MainActor in
@@ -76,7 +76,7 @@ class NetworkMonitor: ObservableObject {
                 self.isConnected = path.status == .satisfied
                 self.lastStatusChange = Date()
                 
-                // Determinar tipo de conexão
+                // Determine connection type
                 if path.usesInterfaceType(.wifi) {
                     self.connectionType = .wifi
                 } else if path.usesInterfaceType(.cellular) {
@@ -87,7 +87,7 @@ class NetworkMonitor: ObservableObject {
                     self.connectionType = .unknown
                 }
                 
-                // Log mudanças de status
+                // Log status changes
                 if wasConnected != self.isConnected {
                     if self.isConnected {
                         print("✅ Network connected via \(self.connectionType.description)")
@@ -104,7 +104,7 @@ class NetworkMonitor: ObservableObject {
         print("🔍 Network monitoring started")
     }
     
-    /// Para o monitoramento de rede
+    /// Stops network monitoring
     func stopMonitoring() {
         monitor.cancel()
         print("🛑 Network monitoring stopped")
@@ -112,13 +112,13 @@ class NetworkMonitor: ObservableObject {
     
     // MARK: - Connection Handlers
     
-    /// Chamado quando a conexão é restaurada
+    /// Called when connection is restored
     private func handleConnectionRestored() async {
-        // Notificar SupabaseManager
+        // Notify SupabaseManager
         SupabaseManager.shared.isOnline = true
         await SupabaseManager.shared.checkConnection()
         
-        // Tentar sincronizar operações pendentes
+        // Try to sync pending operations
         let syncManager = SyncManager(supabase: SupabaseManager.shared.supabase)
         
         if syncManager.pendingOperationsCount > 0 {
@@ -133,31 +133,31 @@ class NetworkMonitor: ObservableObject {
         }
     }
     
-    /// Chamado quando a conexão é perdida
+    /// Called when connection is lost
     private func handleConnectionLost() async {
-        // Notificar SupabaseManager
+        // Notify SupabaseManager
         SupabaseManager.shared.isOnline = false
         SupabaseManager.shared.connectionStatus = .disconnected
     }
     
     // MARK: - Helper Methods
     
-    /// Verifica se há conexão com a internet
-    /// - Returns: true se conectado
+    /// Checks if there's internet connection
+    /// - Returns: true if connected
     func checkConnection() -> Bool {
         return isConnected
     }
     
-    /// Retorna descrição do status atual
+    /// Returns current status description
     var statusDescription: String {
         if isConnected {
-            return "Conectado via \(connectionType.description)"
+            return "Connected via \(connectionType.description)"
         } else {
-            return "Sem conexão"
+            return "No connection"
         }
     }
     
-    /// Retorna ícone do status atual
+    /// Returns current status icon
     var statusIcon: String {
         if isConnected {
             return connectionType.icon

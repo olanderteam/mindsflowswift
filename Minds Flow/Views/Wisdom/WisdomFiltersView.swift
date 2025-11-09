@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para filtros avançados do sistema Wisdom
+/// View to advanced filters do sistema Wisdom
 struct WisdomFiltersView: View {
     @ObservedObject var viewModel: WisdomViewModel
     @Environment(\.dismiss) private var dismiss
@@ -23,31 +23,31 @@ struct WisdomFiltersView: View {
                     // Header
                     headerSection
                     
-                    // Filtro por categoria
+                    // Filter by category
                     categoryFilterSection
                     
-                    // Filtro por emoção
+                    // Filter by emotion
                     emotionFilterSection
                     
-                    // Filtro por tags
+                    // Filter by tags
                     tagsFilterSection
                     
-                    // Estatísticas dos filtros
+                    // Filter statistics
                     filterStatsSection
                 }
                 .padding()
             }
-            .navigationTitle("Filtros")
+            .navigationTitle("Filters")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Aplicar") {
+                    Button("Apply") {
                         applyFilters()
                     }
                     .fontWeight(.semibold)
@@ -67,7 +67,7 @@ struct WisdomFiltersView: View {
                 .font(.system(size: 40))
                 .foregroundColor(.blue)
             
-            Text("Filtrar Wisdom")
+            Text("Filter Wisdom")
                 .font(.title2)
                 .fontWeight(.semibold)
             
@@ -81,13 +81,13 @@ struct WisdomFiltersView: View {
     private var categoryFilterSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Categoria")
+                Text("Category")
                     .font(.headline)
                 
                 Spacer()
                 
                 if tempSelectedCategory != nil {
-                    Button("Limpar") {
+                    Button("Clear") {
                         tempSelectedCategory = nil
                     }
                     .font(.caption)
@@ -122,7 +122,7 @@ struct WisdomFiltersView: View {
                 Spacer()
                 
                 if tempSelectedEmotion != nil {
-                    Button("Limpar") {
+                    Button("Clear") {
                         tempSelectedEmotion = nil
                     }
                     .font(.caption)
@@ -157,7 +157,7 @@ struct WisdomFiltersView: View {
                 Spacer()
                 
                 if !tempSelectedTags.isEmpty {
-                    Button("Limpar") {
+                    Button("Clear") {
                         tempSelectedTags.removeAll()
                     }
                     .font(.caption)
@@ -166,7 +166,7 @@ struct WisdomFiltersView: View {
             }
             
             if viewModel.availableTags.isEmpty {
-                Text("Nenhuma tag disponível")
+                Text("No tags available")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -213,12 +213,12 @@ struct WisdomFiltersView: View {
             
             // Ações rápidas
             VStack(spacing: 8) {
-                Button("Limpar Todos os Filtros") {
+                Button("Clear All Filters") {
                     clearAllFilters()
                 }
                 .foregroundColor(.red)
                 
-                Button("Aplicar Filtros Sugeridos") {
+                Button("Apply Suggested Filters") {
                     applySuggestedFilters()
                 }
                 .foregroundColor(.blue)
@@ -266,7 +266,7 @@ struct WisdomFiltersView: View {
         viewModel.setCategoryFilter(tempSelectedCategory)
         viewModel.setEmotionFilter(tempSelectedEmotion)
         
-        // Aplicar tags selecionadas
+        // Apply selected tags
         viewModel.selectedTags = tempSelectedTags
         viewModel.applyFilters()
         
@@ -280,7 +280,7 @@ struct WisdomFiltersView: View {
     }
     
     private func applySuggestedFilters() {
-        // Sugerir filtros baseados nas estatísticas
+        // Suggest filters based on statistics
         if let mostUsedCategory = viewModel.wisdomStats.mostUsedCategory {
             tempSelectedCategory = mostUsedCategory
         }
@@ -293,7 +293,7 @@ struct WisdomFiltersView: View {
 
 // MARK: - Supporting Views
 
-/// Card para filtro de categoria
+/// Card for category filter
 struct FilterCategoryCard: View {
     let category: WisdomCategory
     let isSelected: Bool
@@ -397,7 +397,7 @@ struct FilterTagChip: View {
     }
 }
 
-/// Card para estatísticas dos filtros
+/// Card for filter statistics
 struct FilterStatCard: View {
     let title: String
     let value: String

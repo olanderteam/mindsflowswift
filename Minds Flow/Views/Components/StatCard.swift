@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// Card para exibir estatísticas
+/// Card to display statistics
 struct StatCard: View {
     let title: String
     let value: String

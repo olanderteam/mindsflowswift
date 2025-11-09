@@ -51,7 +51,7 @@ class CacheManager {
     /// Armazena dados no cache
     /// - Parameters:
     ///   - data: Array de objetos Codable para cachear
-    ///   - key: Chave do cache
+    ///   - key: Cache key
     func cache<T: Codable>(_ data: [T], for key: CacheKey) throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -70,8 +70,8 @@ class CacheManager {
         }
     }
     
-    /// Recupera dados do cache
-    /// - Parameter key: Chave do cache
+    /// Retrieves dados do cache
+    /// - Parameter key: Cache key
     /// - Returns: Array de objetos ou nil se não encontrado
     func getCached<T: Codable>(for key: CacheKey) throws -> [T]? {
         let decoder = JSONDecoder()
@@ -100,7 +100,7 @@ class CacheManager {
     /// Armazena um único objeto no cache
     /// - Parameters:
     ///   - object: Objeto Codable para cachear
-    ///   - key: Chave do cache
+    ///   - key: Cache key
     func cacheSingle<T: Codable>(_ object: T, for key: CacheKey) throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -110,8 +110,8 @@ class CacheManager {
         print("✅ Cached single object for key: \(key.rawValue)")
     }
     
-    /// Recupera um único objeto do cache
-    /// - Parameter key: Chave do cache
+    /// Retrieves um único objeto do cache
+    /// - Parameter key: Cache key
     /// - Returns: Objeto ou nil se não encontrado
     func getCachedSingle<T: Codable>(for key: CacheKey) throws -> T? {
         guard let data = userDefaults.data(forKey: key.rawValue) else {
@@ -127,8 +127,8 @@ class CacheManager {
         return decoded
     }
     
-    /// Limpa cache para uma chave específica
-    /// - Parameter key: Chave do cache a ser limpa
+    /// Clears cache para uma chave específica
+    /// - Parameter key: Cache key a ser limpa
     func clearCache(for key: CacheKey) {
         // Limpar UserDefaults
         userDefaults.removeObject(forKey: key.rawValue)
@@ -156,8 +156,8 @@ class CacheManager {
         print("✅ Cleared all cache")
     }
     
-    /// Retorna o tamanho do cache em bytes
-    /// - Parameter key: Chave do cache (opcional, se nil retorna tamanho total)
+    /// Returns o tamanho do cache em bytes
+    /// - Parameter key: Cache key (opcional, se nil retorna tamanho total)
     /// - Returns: Tamanho em bytes
     func getCacheSize(for key: CacheKey? = nil) -> Int64 {
         var totalSize: Int64 = 0
@@ -188,8 +188,8 @@ class CacheManager {
         return totalSize
     }
     
-    /// Retorna o tamanho do cache formatado
-    /// - Parameter key: Chave do cache (opcional)
+    /// Returns o tamanho do cache formatado
+    /// - Parameter key: Cache key (opcional)
     /// - Returns: String formatada (ex: "1.5 MB")
     func getFormattedCacheSize(for key: CacheKey? = nil) -> String {
         let bytes = getCacheSize(for: key)
@@ -199,8 +199,8 @@ class CacheManager {
         return formatter.string(fromByteCount: bytes)
     }
     
-    /// Verifica se existe cache para uma chave
-    /// - Parameter key: Chave do cache
+    /// Checks if existe cache para uma chave
+    /// - Parameter key: Cache key
     /// - Returns: true se existe cache
     func hasCachedData(for key: CacheKey) -> Bool {
         if userDefaults.data(forKey: key.rawValue) != nil {
@@ -211,8 +211,8 @@ class CacheManager {
         return fileManager.fileExists(atPath: fileURL.path)
     }
     
-    /// Retorna a data da última modificação do cache
-    /// - Parameter key: Chave do cache
+    /// Returns a data da última modificação do cache
+    /// - Parameter key: Cache key
     /// - Returns: Data da última modificação ou nil
     func getCacheLastModified(for key: CacheKey) -> Date? {
         let fileURL = cacheDirectory.appendingPathComponent(key.fileName)
@@ -225,10 +225,10 @@ class CacheManager {
         return nil
     }
     
-    /// Verifica se o cache está expirado
+    /// Checks if o cache está expirado
     /// - Parameters:
-    ///   - key: Chave do cache
-    ///   - expirationTime: Tempo de expiração em segundos (padrão: 5 minutos)
+    ///   - key: Cache key
+    ///   - expirationTime: Expiration time in seconds (default: 5 minutos)
     /// - Returns: true se o cache está expirado
     func isCacheExpired(for key: CacheKey, expirationTime: TimeInterval = 300) -> Bool {
         guard let lastModified = getCacheLastModified(for: key) else {

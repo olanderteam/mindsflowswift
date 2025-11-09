@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 import Supabase
 
-/// ViewModel para gerenciar operações CRUD de tarefas
-/// Implementa comunicação com Supabase e lógica de negócio
+/// ViewModel to manage task CRUD operations
+/// Implements communication with Supabase and business logic
 @MainActor
 class TasksViewModel: ObservableObject {
     
@@ -34,10 +34,10 @@ class TasksViewModel: ObservableObject {
         self.syncManager = SyncManager(supabase: supabase.supabase)
         
         _Concurrency.Task {
-            // Aguardar autenticação estar completa
-            try? await _Concurrency.Task.sleep(nanoseconds: 1_500_000_000) // 1.5 segundos
+            // Wait for authentication to complete
+            try? await _Concurrency.Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
             
-            // Verificar se usuário está autenticado antes de carregar
+            // Check if user is authenticated before loading
             if AuthManager.shared.isAuthenticated {
                 await loadTasks()
                 subscribeToChanges()
@@ -97,7 +97,7 @@ class TasksViewModel: ObservableObject {
         isLoading = false
     }
     
-    /// Cria uma nova tarefa
+    /// Creates a new task
     func createTask(
         title: String,
         description: String,
@@ -124,7 +124,7 @@ class TasksViewModel: ObservableObject {
         )
         
         do {
-            // Validar tarefa
+            // Validate task
             try newTask.validate()
             
             if supabase.isOnline {
@@ -138,7 +138,7 @@ class TasksViewModel: ObservableObject {
                 
                 print("✅ Task created in Supabase")
             } else {
-                // Offline: adicionar localmente e enfileirar
+                // Offline: add locally and queue
                 tasks.append(newTask)
                 applyFilters()
                 
@@ -155,12 +155,12 @@ class TasksViewModel: ObservableObject {
         isLoading = false
     }
     
-    /// Atualiza uma tarefa existente
+    /// Updates an existing task
     func updateTask(_ task: Task) async {
         isLoading = true
         
         do {
-            // Validar tarefa
+            // Validate task
             try task.validate()
             
             if supabase.isOnline {
@@ -196,7 +196,7 @@ class TasksViewModel: ObservableObject {
         isLoading = false
     }
     
-    /// Deleta uma tarefa
+    /// Deletes a task
     func deleteTask(_ task: Task) async {
         isLoading = true
         
@@ -212,7 +212,7 @@ class TasksViewModel: ObservableObject {
                 
                 print("✅ Task deleted from Supabase")
             } else {
-                // Offline: remover localmente e enfileirar
+                // Offline: remove locally and queue
                 tasks.removeAll { $0.id == task.id }
                 applyFilters()
                 
@@ -229,7 +229,7 @@ class TasksViewModel: ObservableObject {
         isLoading = false
     }
     
-    /// Marca/desmarca tarefa como concluída
+    /// Toggles task completion status
     func toggleTaskCompletion(_ task: Task) async {
         var updatedTask = task
         
@@ -244,7 +244,7 @@ class TasksViewModel: ObservableObject {
     
     // MARK: - Realtime Subscription
     
-    /// Subscreve a mudanças em tempo real nas tarefas
+    /// Subscribes to real-time changes in tasks
     func subscribeToChanges() {
         guard let userId = AuthManager.shared.currentUser?.id else {
             print("⚠️ Cannot subscribe: no user ID")
@@ -284,16 +284,16 @@ class TasksViewModel: ObservableObject {
     
     // MARK: - Filtering and Search
     
-    /// Aplica filtros às tarefas
+    /// Applies filters to tasks
     func applyFilters() {
         var filtered = tasks
         
-        // Filtro por nível de energia
+        // Filter by energy level
         if let energyFilter = selectedEnergyFilter {
             filtered = filtered.filter { $0.energyLevel == energyFilter }
         }
         
-        // Filtro por texto de busca
+        // Filter by search text
         if !searchText.isEmpty {
             filtered = filtered.filter { task in
                 task.title.localizedCaseInsensitiveContains(searchText) ||
@@ -303,7 +303,7 @@ class TasksViewModel: ObservableObject {
         }
         
         filteredTasks = filtered.sorted { task1, task2 in
-            // Tarefas não concluídas primeiro
+            // Incomplete tasks first
             if task1.isCompleted != task2.isCompleted {
                 return !task1.isCompleted
             }
@@ -312,7 +312,7 @@ class TasksViewModel: ObservableObject {
         }
     }
     
-    /// Define filtro por nível de energia
+    /// Sets energy level filter
     func setEnergyFilter(_ energyLevel: EnergyLevel?) {
         selectedEnergyFilter = energyLevel
         applyFilters()
@@ -324,14 +324,14 @@ class TasksViewModel: ObservableObject {
         applyFilters()
     }
     
-    /// Limpa todos os filtros
+    /// Clears all filters
     func clearFilters() {
         selectedEnergyFilter = nil
         searchText = ""
         applyFilters()
     }
     
-    /// Recarrega dados (útil após login)
+    /// Reloads data (useful after login)
     func reload() async {
         await loadTasks()
         subscribeToChanges()
@@ -339,17 +339,17 @@ class TasksViewModel: ObservableObject {
     
     // MARK: - Computed Properties
     
-    /// Tarefas pendentes
+    /// Pending tasks
     var pendingTasks: [Task] {
         return tasks.filter { !$0.isCompleted }
     }
     
-    /// Tarefas concluídas
+    /// Completed tasks
     var completedTasks: [Task] {
         return tasks.filter { $0.isCompleted }
     }
     
-    /// Estatísticas das tarefas
+    /// Task statistics
     var taskStats: TaskStats {
         return TaskStats(
             total: tasks.count,
@@ -361,7 +361,7 @@ class TasksViewModel: ObservableObject {
         )
     }
     
-    /// Tarefas sugeridas baseadas no estado atual do usuário
+    /// Suggested tasks based on user's current state
     func getSuggestedTasks(for energyLevel: EnergyLevel) -> [Task] {
         return pendingTasks
             .filter { $0.isAppropriateFor(currentEnergyLevel: energyLevel) }
@@ -382,9 +382,9 @@ class TasksViewModel: ObservableObject {
         let message: String
         
         if error.localizedDescription.contains("Network") {
-            message = "Erro de conexão. Verifique sua internet."
+            message = "Connection error. Check your internet."
         } else {
-            message = "Erro ao processar tarefas. Tente novamente."
+            message = "Error processing tasks. Please try again."
         }
         
         showErrorMessage(message)
@@ -393,7 +393,7 @@ class TasksViewModel: ObservableObject {
 
 // MARK: - Task Stats
 
-/// Estrutura para estatísticas das tarefas
+/// Structure for task statistics
 struct TaskStats {
     let total: Int
     let completed: Int

@@ -8,7 +8,7 @@
 import SwiftUI
 import Charts
 
-/// View principal do histórico de crescimento
+/// Main view of growth history
 struct HistoryView: View {
     @StateObject private var viewModel = HistoryViewModel()
     @State private var selectedTimeRange: TimeRange = .week
@@ -24,18 +24,18 @@ struct HistoryView: View {
                     // Gráfico principal
                     mainChartSection
                     
-                    // Estatísticas resumidas
+                    // Summary statistics
                     summaryStatsSection
                     
-                    // Insights e tendências
+                    // Insights and trends
                     insightsSection
                     
-                    // Histórico detalhado
+                    // Detailed history
                     detailedHistorySection
                 }
                 .padding()
             }
-            .navigationTitle("Histórico")
+            .navigationTitle("History")
             .navigationBarTitleDisplayMode(.large)
             .refreshable {
                 await viewModel.loadData()
@@ -204,7 +204,7 @@ struct HistoryView: View {
     
     private var insightsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Insights e Tendências")
+            Text("Insights and Trends")
                 .font(.headline)
                 .fontWeight(.semibold)
             
@@ -220,7 +220,7 @@ struct HistoryView: View {
     
     private var detailedHistorySection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Histórico Detalhado")
+            Text("Detailed History")
                 .font(.headline)
                 .fontWeight(.semibold)
             
@@ -235,7 +235,7 @@ struct HistoryView: View {
 
 // MARK: - Supporting Views
 
-/// Card para insights
+/// Card for insights
 struct InsightCard: View {
     let insight: GrowthInsight
     
@@ -282,7 +282,7 @@ struct InsightCard: View {
     }
 }
 
-/// Row para entrada do histórico
+/// Row for history entry
 struct HistoryEntryRow: View {
     let entry: HistoryEntry
     

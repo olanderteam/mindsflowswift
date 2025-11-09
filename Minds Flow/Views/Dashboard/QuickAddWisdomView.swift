@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para adicionar wisdom rapidamente do Dashboard
+/// View to quickly add wisdom do Dashboard
 struct QuickAddWisdomView: View {
     @ObservedObject var viewModel: DashboardViewModel
     @Environment(\.dismiss) private var dismiss
@@ -38,17 +38,17 @@ struct QuickAddWisdomView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Nova Wisdom")
+            .navigationTitle("New Wisdom")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Salvar") {
+                    Button("Save") {
                         createWisdom()
                     }
                     .disabled(content.isEmpty || isCreating)
@@ -61,11 +61,11 @@ struct QuickAddWisdomView: View {
     
     private var headerSection: some View {
         VStack(spacing: 8) {
-            Text("Capturar Wisdom")
+            Text("Capture Wisdom")
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("Registre um aprendizado, reflexão ou insight importante")
+            Text("Record a learning, reflection or important insight")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -225,24 +225,24 @@ struct QuickAddWisdomView: View {
     private func getSuggestionText() -> String {
         switch (viewModel.currentEnergyLevel, viewModel.currentEmotion) {
         case (.high, .creative):
-            return "Sua criatividade está em alta! Que tal capturar uma ideia inovadora ou insight criativo?"
+            return "Your creativity is high! How about capturing an innovative idea or creative insight?"
         case (.medium, .calm):
-            return "Momento perfeito para reflexão profunda. Considere registrar um aprendizado importante."
+            return "Perfect moment for deep reflection. Consider recording an important learning."
         case (.low, .sad):
-            return "Às vezes os momentos difíceis trazem os maiores aprendizados. Que lição você pode extrair?"
+            return "Sometimes difficult moments bring the greatest learnings. What lesson can you extract?"
         case (_, .grateful):
-            return "A gratidão abre portas para sabedoria. Registre algo pelo qual você é grato hoje."
+            return "Gratitude opens doors to wisdom. Record something you're grateful for today."
         default:
-            return "Baseado no seu estado atual, este é um bom momento para capturar insights e aprendizados."
+            return "Based on your current state, this is a good time to capture insights and learnings."
         }
     }
     
     private func getSuggestedPrompt() -> String? {
         switch (viewModel.currentEnergyLevel, viewModel.currentEmotion) {
         case (.high, .creative):
-            return "Hoje tive uma ideia interessante sobre..."
+            return "Today I had an interesting idea about..."
         case (.medium, .calm):
-            return "Refletindo sobre o dia, percebi que..."
+            return "Reflecting on the day, I realized that..."
         case (.low, .sad):
             return "Mesmo nos momentos difíceis, aprendi que..."
         case (_, .grateful):

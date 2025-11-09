@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para atualizar o estado mental do usuário
+/// View to update user's mental state
 struct MentalStateUpdateView: View {
     @ObservedObject var viewModel: DashboardViewModel
     @Environment(\.dismiss) private var dismiss
@@ -44,17 +44,17 @@ struct MentalStateUpdateView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Estado Mental")
+            .navigationTitle("Mental State")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Salvar") {
+                    Button("Save") {
                         updateMentalState()
                     }
                     .disabled(isUpdating)
@@ -67,12 +67,12 @@ struct MentalStateUpdateView: View {
     
     private var headerSection: some View {
         VStack(spacing: 12) {
-            Text("Como você está se sentindo agora?")
+            Text("How are you feeling agora?")
                 .font(.title2)
                 .fontWeight(.semibold)
                 .multilineTextAlignment(.center)
             
-            Text("Compartilhe seu estado atual para receber sugestões personalizadas")
+            Text("Share your current state to receive personalized suggestions")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -138,7 +138,7 @@ struct MentalStateUpdateView: View {
                     .font(.headline)
             }
             
-            TextField("Como você está se sentindo? O que está acontecendo?", text: $notes, axis: .vertical)
+            TextField("How are you feeling? O que está acontecendo?", text: $notes, axis: .vertical)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .lineLimit(3...6)
         }
@@ -191,23 +191,23 @@ struct MentalStateUpdateView: View {
     private func getRecommendationText() -> String {
         switch (selectedEnergyLevel, selectedEmotion) {
         case (.high, .creative):
-            return "Ótimo momento para trabalhar em projetos criativos! Considere tarefas que exijam inovação."
+            return "Great time to work on creative projects! Consider tasks that require innovation."
         case (.high, .focused):
-            return "Aproveite esse foco para tarefas complexas que requerem concentração profunda."
+            return "Take advantage of this focus for complex tasks that require deep concentration."
         case (.high, .motivated):
-            return "Canalize essa energia em atividades produtivas e colaborativas."
+            return "Channel this energy into productive and collaborative activities."
         case (.medium, .calm):
-            return "Momento ideal para organização e planejamento. Considere revisar suas metas."
+            return "Ideal time for organization and planning. Consider reviewing your goals."
         case (.medium, .calm):
-            return "Perfeito para reflexão e aprendizado. Que tal adicionar uma nova wisdom?"
+            return "Perfect for reflection and learning. How about adding a new wisdom?"
         case (.low, .tired):
-            return "Descanse um pouco. Considere tarefas leves ou atividades de autocuidado."
+            return "Rest a bit. Consider light tasks or self-care activities."
         case (.low, .anxious):
-            return "Respire fundo. Foque em uma tarefa simples por vez e pratique mindfulness."
+            return "Take a deep breath. Focus on one simple task at a time and practice mindfulness."
         case (.low, .sad):
-            return "Seja gentil consigo mesmo. Considere atividades que tragam conforto e bem-estar."
+            return "Be gentle with yourself. Consider activities that bring comfort and well-being."
         default:
-            return "Baseado no seu estado atual, vou sugerir atividades adequadas para você."
+            return "Based on your current state, I'll suggest suitable activities for you."
         }
     }
 }

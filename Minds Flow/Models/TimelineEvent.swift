@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// Modelo para representar eventos da timeline do usuário
-/// Agrega estatísticas e atividades ao longo do tempo
+/// Model to represent user timeline events
+/// Aggregates statistics and activities over time
 struct TimelineEvent: Codable, Identifiable {
     
     // MARK: - Properties
@@ -63,14 +63,14 @@ struct TimelineEvent: Codable, Identifiable {
 
 extension TimelineEvent {
     
-    /// Retorna o total de atividades
+    /// Returns o total de atividades
     var totalActivities: Int {
         return (actionActivityCount ?? 0) +
                (tasksCompleted ?? 0) +
                (mentalStatusCount ?? 0)
     }
     
-    /// Retorna há quanto tempo o usuário está no sistema
+    /// Returns how long the user has been in the system
     var membershipDuration: String? {
         guard let since = userSince else { return nil }
         
@@ -88,16 +88,16 @@ extension TimelineEvent {
         return "Hoje"
     }
     
-    /// Retorna descrição formatada do evento
+    /// Returns descrição formatada do evento
     var description: String {
         var parts: [String] = []
         
         if let tasks = tasksCompleted, tasks > 0 {
-            parts.append("\(tasks) tarefa\(tasks > 1 ? "s" : "") concluída\(tasks > 1 ? "s" : "")")
+            parts.append("\(tasks) task\(tasks > 1 ? "s" : "") completed")
         }
         
         if let mental = mentalStatusCount, mental > 0 {
-            parts.append("\(mental) registro\(mental > 1 ? "s" : "") de estado mental")
+            parts.append("\(mental) mental state record\(mental > 1 ? "s" : "")")
         }
         
         if let activities = actionActivityCount, activities > 0 {

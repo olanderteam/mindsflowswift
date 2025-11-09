@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para adicionar tarefas rapidamente do Dashboard
+/// View to quickly add tasks do Dashboard
 struct QuickAddTaskView: View {
     @ObservedObject var viewModel: DashboardViewModel
     @Environment(\.dismiss) private var dismiss
@@ -33,17 +33,17 @@ struct QuickAddTaskView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Nova Tarefa")
+            .navigationTitle("New Task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Criar") {
+                    Button("Create") {
                         createTask()
                     }
                     .disabled(title.isEmpty || isCreating)
@@ -56,11 +56,11 @@ struct QuickAddTaskView: View {
     
     private var headerSection: some View {
         VStack(spacing: 8) {
-            Text("Criar Nova Tarefa")
+            Text("Create New Task")
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("Adicione uma tarefa alinhada com seu estado atual")
+            Text("Add a task aligned with your current state")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -76,7 +76,7 @@ struct QuickAddTaskView: View {
                 Text("Título *")
                     .font(.headline)
                 
-                TextField("Ex: Revisar projeto, Meditar 10 min...", text: $title)
+                TextField("Ex: Review project, Meditate 10 min...", text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
             }
             
@@ -85,7 +85,7 @@ struct QuickAddTaskView: View {
                 Text("Descrição")
                     .font(.headline)
                 
-                TextField("Detalhes sobre a tarefa (opcional)", text: $description, axis: .vertical)
+                TextField("Task details (optional)", text: $description, axis: .vertical)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .lineLimit(2...4)
             }
@@ -177,30 +177,30 @@ struct QuickAddTaskView: View {
     private func getSuggestionText() -> String {
         switch (viewModel.currentEnergyLevel, viewModel.currentEmotion) {
         case (.high, .creative):
-            return "Com sua energia alta e criatividade em alta, considere tarefas que envolvam brainstorming, design ou inovação."
+            return "With your high energy and creativity, consider tasks involving brainstorming, design or innovation."
         case (.high, .focused):
-            return "Aproveite seu foco intenso para tarefas complexas que requerem concentração profunda."
+            return "Take advantage of your intense focus for complex tasks that require deep concentration."
         case (.medium, .calm):
-            return "Seu estado calmo é ideal para organização, planejamento e tarefas administrativas."
+            return "Your calm state is ideal for organization, planning and administrative tasks."
         case (.low, .tired):
-            return "Com pouca energia, prefira tarefas simples e de baixo esforço mental."
+            return "With low energy, prefer simple tasks with low mental effort."
         default:
-            return "Baseado no seu estado atual (\(viewModel.currentEnergyLevel.displayName), \(viewModel.currentEmotion.displayName)), sugiro tarefas adequadas ao seu nível de energia."
+            return "Based on your current state (\(viewModel.currentEnergyLevel.displayName), \(viewModel.currentEmotion.displayName)), I suggest tasks suitable for your energy level."
         }
     }
     
     private func getSuggestedTaskTitle() -> String? {
         switch (viewModel.currentEnergyLevel, viewModel.currentEmotion) {
         case (.high, .creative):
-            return "Brainstorming para novo projeto"
+            return "Brainstorming for new project"
         case (.high, .focused):
-            return "Revisar documento importante"
+            return "Review important document"
         case (.medium, .calm):
-            return "Organizar agenda da semana"
+            return "Organize week's schedule"
         case (.low, .tired):
-            return "Meditar por 5 minutos"
+            return "Meditate for 5 minutes"
         case (.low, .anxious):
-            return "Respirar e fazer uma pausa"
+            return "Breathe and take a break"
         default:
             return nil
         }

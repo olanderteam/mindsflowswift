@@ -106,17 +106,17 @@ struct Subscription: Codable, Identifiable {
 
 extension Subscription {
     
-    /// Verifica se a assinatura está ativa
+    /// Checks if a assinatura está ativa
     var isActive: Bool {
         return status == .active && currentPeriodEnd > Date()
     }
     
-    /// Verifica se está em período de teste
+    /// Checks if está em período de teste
     var isTrialing: Bool {
         return status == .trialing
     }
     
-    /// Verifica se a assinatura expirou
+    /// Checks if a assinatura expirou
     var isExpired: Bool {
         return currentPeriodEnd < Date() && status != .active
     }
@@ -128,7 +128,7 @@ extension Subscription {
         return max(0, components.day ?? 0)
     }
     
-    /// Retorna descrição formatada dos dias restantes
+    /// Returns descrição formatada dos dias restantes
     var daysRemainingText: String {
         let days = daysRemaining
         
@@ -148,7 +148,7 @@ extension Subscription {
         return components.day ?? 0
     }
     
-    /// Retorna o tipo de plano formatado
+    /// Returns o tipo de plano formatado
     var planName: String {
         switch planId.lowercased() {
         case "free":
@@ -164,17 +164,17 @@ extension Subscription {
         }
     }
     
-    /// Retorna descrição completa da assinatura
+    /// Returns descrição completa da assinatura
     var description: String {
         return "\(planName) - \(status.displayName)"
     }
     
-    /// Verifica se precisa renovar em breve (menos de 7 dias)
+    /// Checks if precisa renovar em breve (menos de 7 dias)
     var needsRenewal: Bool {
         return daysRemaining <= 7 && daysRemaining > 0
     }
     
-    /// Retorna data de renovação formatada
+    /// Returns data de renovação formatada
     var renewalDateFormatted: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium

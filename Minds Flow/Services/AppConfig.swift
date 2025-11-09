@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Configuração do aplicativo
+/// Application configuration
 struct AppConfig {
     static let appVersion = "1.0.0"
     static let appName = "Minds Flow"

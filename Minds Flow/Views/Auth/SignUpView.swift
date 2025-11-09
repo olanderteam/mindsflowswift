@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// Tela de cadastro do usuário
-/// Permite criação de nova conta com email, senha e nome
+/// User registration screen
+/// Allows creation of new account with email, password and name
 struct SignUpView: View {
     
     // MARK: - Properties
@@ -42,27 +42,27 @@ struct SignUpView: View {
                     endPoint: .bottomTrailing
                 )
             )
-            .navigationTitle("Criar Conta")
+            .navigationTitle("Create Account")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
             }
         }
-        .alert("Erro", isPresented: $viewModel.showError) {
+        .alert("Error", isPresented: $viewModel.showError) {
             Button("OK") { }
         } message: {
             Text(viewModel.errorMessage)
         }
-        .alert("Sucesso", isPresented: $viewModel.showSuccess) {
+        .alert("Success", isPresented: $viewModel.showSuccess) {
             Button("OK") {
                 dismiss()
             }
         } message: {
-            Text("Conta criada com sucesso! Verifique seu email para confirmar.")
+            Text("Account created successfully! Check your email to confirm.")
         }
     }
     
@@ -75,13 +75,13 @@ struct SignUpView: View {
                 .foregroundColor(.purple)
             
             // Title
-            Text("Bem-vindo ao Minds Flow")
+            Text("Welcome to Minds Flow")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
             
             // Subtitle
-            Text("Crie sua conta e comece a organizar sua mente")
+            Text("Create your account and start organizing your mind")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -94,31 +94,31 @@ struct SignUpView: View {
             
             // Name Field
             CustomTextField(
-                title: "Nome Completo",
+                title: "Full Name",
                 text: $viewModel.name,
-                placeholder: "Digite seu nome completo"
+                placeholder: "Enter your full name"
             )
             
             // Email Field
             CustomTextField(
                 title: "Email",
                 text: $viewModel.email,
-                placeholder: "seu@email.com",
+                placeholder: "your@email.com",
                 keyboardType: .emailAddress
             )
             
             // Password Field
             CustomSecureField(
-                title: "Senha",
+                title: "Password",
                 text: $viewModel.password,
-                placeholder: "Mínimo 6 caracteres"
+                placeholder: "Minimum 6 characters"
             )
             
             // Confirm Password Field
             CustomSecureField(
-                title: "Confirmar Senha",
+                title: "Confirm Password",
                 text: $viewModel.confirmPassword,
-                placeholder: "Digite a senha novamente"
+                placeholder: "Enter password again"
             )
             
             // Password Requirements
@@ -129,14 +129,14 @@ struct SignUpView: View {
     // MARK: - Password Requirements Section
     private var passwordRequirementsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Requisitos da senha:")
+            Text("Password requirements:")
                 .font(.caption)
                 .foregroundColor(.secondary)
             
             HStack {
                 Image(systemName: viewModel.password.count >= 6 ? "checkmark.circle.fill" : "circle")
                     .foregroundColor(viewModel.password.count >= 6 ? .green : .secondary)
-                Text("Mínimo 6 caracteres")
+                Text("Minimum 6 characters")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
@@ -145,7 +145,7 @@ struct SignUpView: View {
             HStack {
                 Image(systemName: viewModel.passwordsMatch ? "checkmark.circle.fill" : "circle")
                     .foregroundColor(viewModel.passwordsMatch ? .green : .secondary)
-                Text("Senhas coincidem")
+                Text("Passwords match")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
@@ -170,7 +170,7 @@ struct SignUpView: View {
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             .scaleEffect(0.8)
                     } else {
-                        Text("Criar Conta")
+                        Text("Create Account")
                             .fontWeight(.semibold)
                     }
                 }
@@ -184,7 +184,7 @@ struct SignUpView: View {
             .opacity(viewModel.isFormValid ? 1.0 : 0.6)
             
             // Terms and Privacy
-            Text("Ao criar uma conta, você concorda com nossos Termos de Uso e Política de Privacidade.")
+            Text("By creating an account, you agree to our Terms of Use and Privacy Policy.")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

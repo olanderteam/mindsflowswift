@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 import Supabase
 
-/// ViewModel para gerenciar operações CRUD do sistema Wisdom
-/// Biblioteca pessoal de conhecimentos e reflexões
+/// ViewModel to manage CRUD operations for Wisdom system
+/// Personal library of knowledge and reflections
 @MainActor
 class WisdomViewModel: ObservableObject {
     
@@ -36,10 +36,10 @@ class WisdomViewModel: ObservableObject {
         self.syncManager = SyncManager(supabase: supabase.supabase)
         
         _Concurrency.Task {
-            // Aguardar autenticação estar completa
-            try? await _Concurrency.Task.sleep(nanoseconds: 1_500_000_000) // 1.5 segundos
+            // Wait for authentication to complete
+            try? await _Concurrency.Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
             
-            // Verificar se usuário está autenticado antes de carregar
+            // Check if user is authenticated before loading
             if AuthManager.shared.isAuthenticated {
                 await loadWisdomEntries()
                 subscribeToChanges()
@@ -140,7 +140,7 @@ class WisdomViewModel: ObservableObject {
                 
                 print("✅ Wisdom entry created in Supabase")
             } else {
-                // Offline: adicionar localmente e enfileirar
+                // Offline: add locally and queue
                 wisdomEntries.append(newWisdom)
                 applyFilters()
                 
@@ -214,7 +214,7 @@ class WisdomViewModel: ObservableObject {
                 
                 print("✅ Wisdom entry deleted from Supabase")
             } else {
-                // Offline: remover localmente e enfileirar
+                // Offline: remove locally and queue
                 wisdomEntries.removeAll { $0.id == wisdom.id }
                 applyFilters()
                 
@@ -273,21 +273,21 @@ class WisdomViewModel: ObservableObject {
     
     // MARK: - Filtering and Search
     
-    /// Aplica filtros às entradas de wisdom
+    /// Applies filters às entradas de wisdom
     func applyFilters() {
         var filtered = wisdomEntries
         
-        // Filtro por categoria
+        // Filter by category
         if let category = selectedCategory {
             filtered = filtered.filter { $0.category == category }
         }
         
-        // Filtro por emoção
+        // Filter by emotion
         if let emotion = selectedEmotion {
             filtered = filtered.filter { $0.emotion == emotion }
         }
         
-        // Filtro por tags selecionadas
+        // Filter by selected tags
         if !selectedTags.isEmpty {
             filtered = filtered.filter { wisdom in
                 selectedTags.allSatisfy { selectedTag in
@@ -298,7 +298,7 @@ class WisdomViewModel: ObservableObject {
             }
         }
         
-        // Filtro por texto de busca
+        // Filter by search text
         if !searchText.isEmpty {
             filtered = filtered.filter { wisdom in
                 wisdom.contains(keyword: searchText)
@@ -311,13 +311,13 @@ class WisdomViewModel: ObservableObject {
         }
     }
     
-    /// Define filtro por categoria
+    /// Sets category filter
     func setCategoryFilter(_ category: WisdomCategory?) {
         selectedCategory = category
         applyFilters()
     }
     
-    /// Define filtro por emoção
+    /// Sets emotion filter
     func setEmotionFilter(_ emotion: Emotion?) {
         selectedEmotion = emotion
         applyFilters()
@@ -329,7 +329,7 @@ class WisdomViewModel: ObservableObject {
         applyFilters()
     }
     
-    /// Adiciona/remove tag do filtro
+    /// Adds/removes tag from filter
     func toggleTagFilter(_ tag: String) {
         let cleanTag = tag.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         if selectedTags.contains(cleanTag) {
@@ -340,7 +340,7 @@ class WisdomViewModel: ObservableObject {
         applyFilters()
     }
     
-    /// Limpa todos os filtros
+    /// Clears all filters
     func clearFilters() {
         selectedCategory = nil
         selectedEmotion = nil
@@ -349,7 +349,7 @@ class WisdomViewModel: ObservableObject {
         applyFilters()
     }
     
-    /// Recarrega dados (útil após login)
+    /// Reloads data (useful after login)
     func reload() async {
         await loadWisdomEntries()
         subscribeToChanges()
@@ -363,7 +363,7 @@ class WisdomViewModel: ObservableObject {
         return Array(Set(allTags)).sorted()
     }
     
-    /// Estatísticas das entradas de wisdom
+    /// Wisdom entries statistics
     var wisdomStats: WisdomStats {
         return WisdomStats(
             total: wisdomEntries.count,
@@ -375,7 +375,7 @@ class WisdomViewModel: ObservableObject {
         )
     }
     
-    /// Entradas sugeridas baseadas no estado emocional atual
+    /// Suggested entries based on current emotional state
     func getSuggestedWisdom(for emotion: Emotion) -> [Wisdom] {
         return wisdomEntries
             .filter { $0.isAppropriateFor(currentEmotion: emotion) }
@@ -400,7 +400,7 @@ class WisdomViewModel: ObservableObject {
             .sorted { $0.createdAt > $1.createdAt }
     }
     
-    /// Entradas favoritas (baseado em categoria de gratidão e insights)
+    /// Favorite entries (based on gratitude and insights category)
     var favoriteEntries: [Wisdom] {
         return wisdomEntries
             .filter { $0.category == .gratitude || $0.category == .insight }
@@ -420,15 +420,15 @@ class WisdomViewModel: ObservableObject {
         let message: String
         
         if error.localizedDescription.contains("Network") {
-            message = "Erro de conexão. Verifique sua internet."
+            message = "Connection error. Check your internet."
         } else {
-            message = "Erro ao processar wisdom. Tente novamente."
+            message = "Error processing wisdom. Please try again."
         }
         
         showErrorMessage(message)
     }
     
-    /// Valida conteúdo antes de salvar
+    /// Validates content before saving
     func validateContent(_ content: String) -> Bool {
         let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmedContent.count >= 10 // Mínimo 10 caracteres
@@ -445,19 +445,19 @@ class WisdomViewModel: ObservableObject {
 
 // MARK: - Wisdom Stats
 
-/// Estrutura para estatísticas das entradas de wisdom
+/// Structure for wisdom entries statistics
 struct WisdomStats {
     let total: Int
     let byCategory: [WisdomCategory: Int]
     let byEmotion: [Emotion: Int]
     let totalTags: Int
     
-    /// Categoria mais usada
+    /// Most used category
     var mostUsedCategory: WisdomCategory? {
         return byCategory.max(by: { $0.value < $1.value })?.key
     }
     
-    /// Emoção mais registrada
+    /// Most registered emotion
     var mostRegisteredEmotion: Emotion? {
         return byEmotion.max(by: { $0.value < $1.value })?.key
     }

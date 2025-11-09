@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// View principal que gerencia o estado de autenticação
-/// Decide se mostra telas de login ou o app principal
+/// Main view that manages authentication state
+/// Decides whether to show login screens or main app
 struct AuthView: View {
     
     // MARK: - Properties
@@ -19,10 +19,10 @@ struct AuthView: View {
     var body: some View {
         Group {
             if isLoading {
-                // Tela de carregamento
+                // Loading screen
                 LoadingView()
             } else if authManager.isAuthenticated {
-                // Usuário autenticado - mostrar app principal
+                // Authenticated user - show main app
                 let _ = print("🔍 AuthView: User is authenticated, showing main app")
                 TabView {
                     DashboardView()
@@ -32,7 +32,7 @@ struct AuthView: View {
                     
                     TasksView()
                         .tabItem {
-                            Label("Tarefas", systemImage: "checkmark.circle.fill")
+                            Label("Tasks", systemImage: "checkmark.circle.fill")
                         }
                     
                     WisdomView()
@@ -42,16 +42,16 @@ struct AuthView: View {
                     
                     HistoryView()
                         .tabItem {
-                            Label("Histórico", systemImage: "chart.line.uptrend.xyaxis")
+                            Label("History", systemImage: "chart.line.uptrend.xyaxis")
                         }
                     
                     ProfileView()
                         .tabItem {
-                            Label("Perfil", systemImage: "person.fill")
+                            Label("Profile", systemImage: "person.fill")
                         }
                 }
             } else {
-                // Usuário não autenticado - mostrar login
+                // Unauthenticated user - show login
                 let _ = print("🔍 AuthView: User is NOT authenticated, showing login")
                 LoginView()
             }
@@ -60,7 +60,7 @@ struct AuthView: View {
             print("🔍 AuthView: isAuthenticated changed to \(newValue)")
         }
         .onAppear {
-            // Simular um pequeno delay para verificação de autenticação
+            // Simulate a small delay for authentication verification
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 isLoading = false
             }
@@ -70,7 +70,7 @@ struct AuthView: View {
 
 // MARK: - Loading View
 
-/// Tela de carregamento inicial do app
+/// Initial app loading screen
 struct LoadingView: View {
     
     @State private var isAnimating = false
@@ -78,7 +78,7 @@ struct LoadingView: View {
     var body: some View {
         VStack(spacing: 30) {
             
-            // Logo animado
+            // Animated logo
             Image(systemName: "brain.head.profile")
                 .font(.system(size: 100))
                 .foregroundColor(.blue)
@@ -88,19 +88,19 @@ struct LoadingView: View {
                     value: isAnimating
                 )
             
-            // Nome do app
+            // App name
             Text("Minds Flow")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
             
-            // Indicador de carregamento
+            // Loading indicator
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .blue))
                 .scaleEffect(1.2)
             
-            // Texto de carregamento
-            Text("Preparando sua experiência...")
+            // Loading text
+            Text("Preparing your experience...")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -120,8 +120,8 @@ struct LoadingView: View {
 
 // MARK: - Main Tab View (Placeholder)
 
-/// View principal com navegação por abas
-/// Esta é uma implementação temporária que será expandida posteriormente
+/// Main view with tab navigation
+/// This is a temporary implementation that will be expanded later
 struct MainTabView: View {
     
     @StateObject private var supabaseManager = SupabaseManager.shared
@@ -136,11 +136,11 @@ struct MainTabView: View {
                     Text("Dashboard")
                 }
             
-            // Tarefas
+            // Tasks
             TasksView()
                     .tabItem {
                         Image(systemName: "checkmark.circle")
-                        Text("Tarefas")
+                        Text("Tasks")
                     }
             
             // Wisdom
@@ -150,18 +150,18 @@ struct MainTabView: View {
                     Text("Wisdom")
                 }
             
-            // Histórico
+            // History
             HistoryView()
                 .tabItem {
                     Image(systemName: "chart.line.uptrend.xyaxis")
-                    Text("Histórico")
+                    Text("History")
                 }
             
-            // Perfil
+            // Profile
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.circle")
-                    Text("Perfil")
+                    Text("Profile")
                 }
         }
         .accentColor(.blue)

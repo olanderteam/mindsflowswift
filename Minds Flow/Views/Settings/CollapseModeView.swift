@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para configurar e gerenciar o modo colapso minimalista
+/// View to configure and manage minimalist collapse mode
 struct CollapseModeView: View {
     @StateObject private var viewModel = CollapseModeViewModel()
     @Environment(\.dismiss) private var dismiss
@@ -22,7 +22,7 @@ struct CollapseModeView: View {
                     // Toggle principal
                     mainToggleSection
                     
-                    // Configurações do modo colapso
+                    // Collapse mode settings
                     if viewModel.isCollapseMode {
                         configurationSection
                     }
@@ -60,7 +60,7 @@ struct CollapseModeView: View {
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
             
-            Text("Reduza distrações visuais e foque no essencial. Perfeito para momentos de baixa energia ou quando você precisa de máxima concentração.")
+            Text("Reduce visual distractions and focus on the essential. Perfect for low energy moments or when you need maximum concentration.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -118,14 +118,14 @@ struct CollapseModeView: View {
     
     private var configurationSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Configurações")
+            Text("Settings")
                 .font(.headline)
             
             VStack(spacing: 12) {
                 // Ocultar estatísticas
                 ConfigToggleRow(
-                    title: "Ocultar Estatísticas",
-                    description: "Remove gráficos e números do dashboard",
+                    title: "Hide Statistics",
+                    description: "Removes charts and numbers from dashboard",
                     icon: "chart.bar.xaxis",
                     isOn: $viewModel.hideStatistics
                 )
@@ -140,8 +140,8 @@ struct CollapseModeView: View {
                 
                 // Ocultar sugestões
                 ConfigToggleRow(
-                    title: "Ocultar Sugestões",
-                    description: "Remove recomendações automáticas",
+                    title: "Hide Suggestions",
+                    description: "Removes automatic recommendations",
                     icon: "lightbulb",
                     isOn: $viewModel.hideSuggestions
                 )
@@ -203,14 +203,14 @@ struct CollapseModeView: View {
             VStack(spacing: 8) {
                 BenefitRow(
                     icon: "brain.head.profile",
-                    title: "Reduz Sobrecarga Cognitiva",
-                    description: "Menos elementos visuais para processar"
+                    title: "Reduces Cognitive Overload",
+                    description: "Fewer visual elements to process"
                 )
                 
                 BenefitRow(
                     icon: "target",
-                    title: "Aumenta o Foco",
-                    description: "Interface limpa para máxima concentração"
+                    title: "Increases Focus",
+                    description: "Clean interface for maximum concentration"
                 )
                 
                 BenefitRow(
@@ -234,7 +234,7 @@ struct CollapseModeView: View {
 
 // MARK: - Supporting Views
 
-/// Row para configurações de toggle
+/// Row for settings de toggle
 struct ConfigToggleRow: View {
     let title: String
     let description: String

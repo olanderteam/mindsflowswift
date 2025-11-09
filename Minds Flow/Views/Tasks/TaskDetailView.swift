@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para visualizar e editar detalhes de uma tarefa
+/// View to view and edit details de uma tarefa
 struct TaskDetailView: View {
     let task: Task
     @ObservedObject var viewModel: TasksViewModel
@@ -43,7 +43,7 @@ struct TaskDetailView: View {
                     viewingSection
                 }
                 
-                // Metadados
+                // Metadata
                 metadataSection
                 
                 // Ações
@@ -51,35 +51,35 @@ struct TaskDetailView: View {
             }
             .padding()
         }
-        .navigationTitle("Detalhes")
+        .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if isEditing {
                     HStack {
-                        Button("Cancelar") {
+                        Button("Cancel") {
                             cancelEditing()
                         }
                         
-                        Button("Salvar") {
+                        Button("Save") {
                             saveChanges()
                         }
                         .disabled(editedTitle.isEmpty || isUpdating)
                     }
                 } else {
-                    Button("Editar") {
+                    Button("Edit") {
                         isEditing = true
                     }
                 }
             }
         }
-        .alert("Excluir Tarefa", isPresented: $showingDeleteAlert) {
+        .alert("Delete Task", isPresented: $showingDeleteAlert) {
             Button("Cancelar", role: .cancel) { }
             Button("Excluir", role: .destructive) {
                 deleteTask()
             }
         } message: {
-            Text("Tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.")
+            Text("Are you sure you want to delete this task? This action cannot be undone.")
         }
     }
     
@@ -403,7 +403,7 @@ struct EnergyLevelEditCard: View {
     }
 }
 
-/// Row para metadados
+/// Row for metadata
 struct MetadataRow: View {
     let icon: String
     let title: String

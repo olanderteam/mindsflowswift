@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// Configuração do Supabase
-/// IMPORTANTE: Este arquivo contém credenciais e não deve ser commitado em produção
+/// Supabase configuration
+/// IMPORTANT: This file contains credentials and should not be committed in production
 struct SupabaseConfig {
     
     // MARK: - Supabase Credentials

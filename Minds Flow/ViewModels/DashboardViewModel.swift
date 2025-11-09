@@ -11,7 +11,7 @@ import SwiftUI
 // Alias para evitar conflito com o modelo Task
 typealias AsyncTask = _Concurrency.Task
 
-/// ViewModel para gerenciar o Dashboard e estado mental do usuário
+/// ViewModel to manage Dashboard and user's mental state
 @MainActor
 class DashboardViewModel: ObservableObject {
     
@@ -23,7 +23,7 @@ class DashboardViewModel: ObservableObject {
     @Published var showError = false
     @Published var errorMessage = ""
     
-    // Sugestões baseadas no estado atual
+    // Suggestions based on current state
     @Published var suggestedTasks: [Task] = []
     @Published var suggestedWisdom: [Wisdom] = []
     @Published var dailyInsight: String = ""
@@ -62,7 +62,7 @@ class DashboardViewModel: ObservableObject {
     
     // MARK: - State Management
     
-    /// Carrega o estado mental atual do usuário
+    /// Loads user's current mental state
     func loadCurrentState() async {
         isLoading = true
         
@@ -71,7 +71,7 @@ class DashboardViewModel: ObservableObject {
                 throw SupabaseError.notAuthenticated
             }
             
-            // Buscar estado mental mais recente
+            // Fetch most recent mental state
             let query = SupabaseQuery
                 .userId(userId)
                 .orderBy("created_at", descending: true)
@@ -83,7 +83,7 @@ class DashboardViewModel: ObservableObject {
             updateSuggestions()
             generateDailyInsight()
             
-            // Cachear estado
+            // Cache state
             if let state = currentMentalState {
                 try? cache.cacheSingle(state, for: .mentalStates)
             }
@@ -107,7 +107,7 @@ class DashboardViewModel: ObservableObject {
         isLoading = false
     }
     
-    /// Atualiza o estado mental do usuário
+    /// Updates user's mental state
     func updateMentalState(energyLevel: EnergyLevel, emotion: Emotion, notes: String? = nil) async {
         guard let userId = AuthManager.shared.currentUser?.id else {
             showErrorMessage("Usuário não autenticado")
@@ -117,7 +117,7 @@ class DashboardViewModel: ObservableObject {
         isLoading = true
         
         do {
-            // Criar novo estado mental
+            // Create new mental state
             let newState = MentalState(
                 userId: userId,
                 mood: emotion,
@@ -215,9 +215,9 @@ class DashboardViewModel: ObservableObject {
         }
     }
     
-    /// Atualiza sugestões baseadas no estado atual
+    /// Updates suggestions based on current state
     private func updateSuggestions() {
-        // Sugerir tarefas baseadas no nível de energia
+        // Suggest tasks based on energy level
         suggestedTasks = getSuggestedTasks(for: currentEnergyLevel)
         
         // Sugerir wisdom baseado na emoção atual
@@ -226,7 +226,7 @@ class DashboardViewModel: ObservableObject {
     
     // MARK: - Suggestions Logic
     
-    /// Retorna tarefas sugeridas baseadas no nível de energia
+    /// Returns suggested tasks based on energy level
     private func getSuggestedTasks(for energyLevel: EnergyLevel) -> [Task] {
         let allTasks = tasksViewModel.tasks
         
@@ -237,7 +237,7 @@ class DashboardViewModel: ObservableObject {
         return Array(filteredTasks.prefix(3))
     }
     
-    /// Retorna wisdom sugerido baseado na emoção atual
+    /// Returns wisdom sugerido baseado na emoção atual
     private func getSuggestedWisdom(for emotion: Emotion) -> [Wisdom] {
         let allWisdom = wisdomViewModel.wisdomEntries
         
@@ -248,56 +248,56 @@ class DashboardViewModel: ObservableObject {
         return Array(filteredWisdom.prefix(2))
     }
     
-    /// Gera insight diária baseada no estado atual
+    /// Generates daily insight based on current state
     private func generateDailyInsight() {
         let insights = getDailyInsights(for: currentEnergyLevel, emotion: currentEmotion)
         dailyInsight = insights.randomElement() ?? "Hoje é um novo dia cheio de possibilidades."
     }
     
-    /// Retorna insights personalizadas baseadas no estado mental
+    /// Returns personalized insights based on mental state
     private func getDailyInsights(for energy: EnergyLevel, emotion: Emotion) -> [String] {
         switch (energy, emotion) {
         case (.high, .motivated):
             return [
-                "Sua energia está alta e você está motivado! É o momento perfeito para tackles desafios importantes.",
-                "Com essa combinação de energia e motivação, você pode conquistar qualquer objetivo hoje.",
-                "Aproveite esse estado mental poderoso para avançar em projetos que exigem foco intenso."
+                "Your energy is high and you're motivated! This is the perfect moment to tackle important challenges.",
+                "With this combination of energy and motivation, you can achieve any goal today.",
+                "Take advantage of this powerful mental state to advance on projects that require intense focus."
             ]
             
         case (.high, .anxious):
             return [
-                "Você tem muita energia, mas está ansioso. Que tal canalizar essa energia em atividades físicas?",
-                "Sua energia alta pode ajudar a transformar a ansiedade em ação produtiva.",
-                "Considere fazer uma pausa para respirar fundo antes de mergulhar nas tarefas."
+                "You have a lot of energy, but you're anxious. How about channeling this energy into physical activities?",
+                "Your high energy can help transform anxiety into productive action.",
+                "Consider taking a break to breathe deeply before diving into tasks."
             ]
             
         case (.low, .calm):
             return [
-                "Você está calmo, mas com pouca energia. É um bom momento para reflexão e planejamento.",
-                "Aproveite esse estado tranquilo para organizar pensamentos e definir prioridades.",
-                "Tarefas leves e contemplativas podem ser ideais para este momento."
+                "You're calm, but with low energy. This is a good moment for reflection and planning.",
+                "Take advantage of this tranquil state to organize thoughts and define priorities.",
+                "Light and contemplative tasks may be ideal for this moment."
             ]
             
         case (.low, .sad):
             return [
-                "Está sendo um dia difícil. Lembre-se de ser gentil consigo mesmo.",
-                "Pequenos passos também são progresso. Comece com algo simples e reconfortante.",
-                "Que tal revisar algumas wisdom que te inspiram ou conversar com alguém querido?"
+                "It's being a difficult day. Remember to be kind to yourself.",
+                "Small steps are also progress. Start with something simple and comforting.",
+                "How about reviewing some wisdom that inspires you or talking to someone dear?"
             ]
             
         case (.medium, .creative):
             return [
-                "Sua criatividade está fluindo! É um ótimo momento para projetos que exigem inovação.",
-                "Aproveite esse estado criativo para explorar novas ideias e soluções.",
-                "Considere documentar suas ideias criativas para revisitar mais tarde."
+                "Your creativity is flowing! This is a great moment for projects that require innovation.",
+                "Take advantage of this creative state to explore new ideas and solutions.",
+                "Consider documenting your creative ideas to revisit later."
             ]
             
         default:
             return [
                 "Cada momento é uma oportunidade para crescer e aprender.",
-                "Confie no seu processo e seja paciente consigo mesmo.",
-                "Pequenas ações consistentes levam a grandes transformações.",
-                "Você tem tudo o que precisa para enfrentar os desafios de hoje."
+                "Trust your process and be patient with yourself.",
+                "Small consistent actions lead to great transformations.",
+                "You have everything you need to face today's challenges."
             ]
         }
     }
@@ -383,15 +383,15 @@ class DashboardViewModel: ObservableObject {
         let message: String
         
         if error.localizedDescription.contains("Network") {
-            message = "Erro de conexão. Verifique sua internet."
+            message = "Connection error. Check your internet."
         } else {
-            message = "Erro ao atualizar estado mental. Tente novamente."
+            message = "Error updating mental state. Please try again."
         }
         
         showErrorMessage(message)
     }
     
-    /// Retorna recomendação baseada no estado atual
+    /// Returns recomendação baseada no estado atual
     var currentRecommendation: String {
         switch (currentEnergyLevel, currentEmotion) {
         case (.high, .motivated):
@@ -401,15 +401,15 @@ class DashboardViewModel: ObservableObject {
         case (.low, .calm):
             return "Perfeito para reflexão e planejamento."
         case (.low, .sad):
-            return "Seja gentil consigo mesmo hoje."
+            return "Be kind to yourself today."
         case (.medium, .creative):
-            return "Sua criatividade está em alta!"
+            return "Your creativity is high!"
         default:
-            return "Confie no seu processo."
+            return "Trust your process."
         }
     }
     
-    /// Retorna cor baseada no estado atual
+    /// Returns cor baseada no estado atual
     var currentStateColor: Color {
         switch currentEmotion {
         case .happy, .grateful, .motivated:

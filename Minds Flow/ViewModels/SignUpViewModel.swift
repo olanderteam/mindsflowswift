@@ -8,8 +8,8 @@
 import Foundation
 import SwiftUI
 
-/// ViewModel para gerenciar a lógica de cadastro
-/// Implementa validações e comunicação com o sistema de autenticação
+/// ViewModel to manage signup logic
+/// Implements validations and communication with authentication system
 @MainActor
 class SignUpViewModel: ObservableObject {
     
@@ -28,12 +28,12 @@ class SignUpViewModel: ObservableObject {
     
     // MARK: - Computed Properties
     
-    /// Verifica se as senhas coincidem
+    /// Checks if as senhas coincidem
     var passwordsMatch: Bool {
         return !password.isEmpty && !confirmPassword.isEmpty && password == confirmPassword
     }
     
-    /// Verifica se o formulário é válido
+    /// Checks if o formulário é válido
     var isFormValid: Bool {
         return !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
                isValidEmail(email) &&
@@ -120,7 +120,7 @@ class SignUpViewModel: ObservableObject {
         }
     }
     
-    /// Verifica se a senha contém caracteres especiais
+    /// Checks if a senha contém caracteres especiais
     private func containsSpecialCharacters(_ password: String) -> Bool {
         let hasUppercase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
         let hasLowercase = password.rangeOfCharacter(from: .lowercaseLetters) != nil

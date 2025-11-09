@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// View principal do aplicativo Minds Flow
-/// Gerencia o fluxo de autenticação e navegação principal
+/// Main view of Minds Flow application
+/// Manages authentication flow and main navigation
 struct ContentView: View {
     var body: some View {
         AuthView()

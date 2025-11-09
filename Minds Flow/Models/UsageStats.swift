@@ -110,7 +110,7 @@ extension UsageStats {
         return String(format: "%.1f", average)
     }
     
-    /// Retorna há quanto tempo o usuário está no sistema
+    /// Returns há quanto tempo o usuário está no sistema
     var membershipDuration: String? {
         guard let since = userSince else { return nil }
         
@@ -128,7 +128,7 @@ extension UsageStats {
         return "Hoje"
     }
     
-    /// Retorna resumo das estatísticas
+    /// Returns resumo das estatísticas
     var summary: String {
         var parts: [String] = []
         

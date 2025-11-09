@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View principal do perfil do usuário
+/// Main view of user profile
 struct ProfileView: View {
     @ObservedObject private var authManager = AuthManager.shared
     @StateObject private var collapseModeViewModel = CollapseModeViewModel()
@@ -18,16 +18,16 @@ struct ProfileView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
-                    // Header do perfil
+                    // Profile header
                     profileHeaderSection
                     
-                    // Configurações rápidas
+                    // Quick settings
                     quickSettingsSection
                     
-                    // Configurações avançadas
+                    // Advanced settings
                     advancedSettingsSection
                     
-                    // Sobre o app
+                    // About the app
                     aboutSection
                     
                     // Logout
@@ -35,21 +35,21 @@ struct ProfileView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Perfil")
+            .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
         }
         .sheet(isPresented: $showingCollapseModeSettings) {
             CollapseModeView()
         }
-        .alert("Sair da Conta", isPresented: $showingLogoutAlert) {
-            Button("Cancelar", role: .cancel) { }
-            Button("Sair", role: .destructive) {
+        .alert("Sign Out", isPresented: $showingLogoutAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Sign Out", role: .destructive) {
                 _Concurrency.Task {
                     try? await AuthManager.shared.signOut()
                 }
             }
         } message: {
-            Text("Tem certeza que deseja sair da sua conta?")
+            Text("Are you sure you want to sign out of your account?")
         }
     }
     
@@ -68,13 +68,13 @@ struct ProfileView: View {
                         .foregroundColor(.white)
                 }
             
-            // Nome e email
+            // Name and email
             VStack(spacing: 4) {
-                Text(authManager.userProfile?.name ?? "Usuário")
+                Text(authManager.userProfile?.name ?? "User")
                     .font(.title2)
                     .fontWeight(.bold)
                 
-                Text(authManager.currentUser?.email ?? "usuario@exemplo.com")
+                Text(authManager.currentUser?.email ?? "user@example.com")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -106,7 +106,7 @@ struct ProfileView: View {
     
     private var quickSettingsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Configurações Rápidas")
+            Text("Quick Settings")
                 .font(.headline)
                 .fontWeight(.semibold)
             
@@ -126,23 +126,23 @@ struct ProfileView: View {
                 // Notificações
                 SettingsRow(
                     icon: "bell.fill",
-                    title: "Notificações",
-                    subtitle: "Lembretes e atualizações",
+                    title: "Notifications",
+                    subtitle: "Reminders and updates",
                     color: .orange,
                     hasToggle: false
                 ) {
-                    // TODO: Implementar configurações de notificação
+                    // TODO: Implement notification settings
                 }
                 
-                // Tema
+                // Theme
                 SettingsRow(
                     icon: "paintbrush.fill",
-                    title: "Tema",
-                    subtitle: "Aparência do app",
+                    title: "Theme",
+                    subtitle: "App appearance",
                     color: .blue,
                     hasToggle: false
                 ) {
-                    // TODO: Implementar configurações de tema
+                    // TODO: Implement theme settings
                 }
             }
         }
@@ -152,38 +152,38 @@ struct ProfileView: View {
     
     private var advancedSettingsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Configurações Avançadas")
+            Text("Advanced Settings")
                 .font(.headline)
                 .fontWeight(.semibold)
             
             VStack(spacing: 12) {
-                // Dados e privacidade
+                // Data and privacy
                 SettingsRow(
                     icon: "lock.shield.fill",
-                    title: "Dados e Privacidade",
-                    subtitle: "Controle seus dados",
+                    title: "Data and Privacy",
+                    subtitle: "Control your data",
                     color: .green,
                     hasToggle: false
                 ) {
-                    // TODO: Implementar configurações de privacidade
+                    // TODO: Implement privacy settings
                 }
                 
-                // Backup e sincronização
+                // Backup and synchronization
                 SettingsRow(
                     icon: "icloud.fill",
-                    title: "Backup e Sincronização",
-                    subtitle: "Mantenha seus dados seguros",
+                    title: "Backup and Sync",
+                    subtitle: "Keep your data safe",
                     color: .blue,
                     hasToggle: false
                 ) {
-                    // TODO: Implementar configurações de backup
+                    // TODO: Implement backup settings
                 }
                 
-                // Exportar dados
+                // Export data
                 SettingsRow(
                     icon: "square.and.arrow.up.fill",
-                    title: "Exportar Dados",
-                    subtitle: "Baixe uma cópia dos seus dados",
+                    title: "Export Data",
+                    subtitle: "Download a copy of your data",
                     color: .indigo,
                     hasToggle: false
                 ) {
@@ -197,15 +197,15 @@ struct ProfileView: View {
     
     private var aboutSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Sobre")
+            Text("About")
                 .font(.headline)
                 .fontWeight(.semibold)
             
             VStack(spacing: 12) {
-                // Versão do app
+                // App version
                 SettingsRow(
                     icon: "info.circle.fill",
-                    title: "Versão do App",
+                    title: "App Version",
                     subtitle: "1.0.0 (Build 1)",
                     color: .gray,
                     hasToggle: false
@@ -224,15 +224,15 @@ struct ProfileView: View {
                     // TODO: Mostrar termos de uso
                 }
                 
-                // Política de privacidade
+                // Privacy policy
                 SettingsRow(
                     icon: "hand.raised.fill",
-                    title: "Política de Privacidade",
-                    subtitle: "Como protegemos seus dados",
+                    title: "Privacy Policy",
+                    subtitle: "How we protect your data",
                     color: .teal,
                     hasToggle: false
                 ) {
-                    // TODO: Mostrar política de privacidade
+                    // TODO: Show privacy policy
                 }
             }
         }
@@ -247,7 +247,7 @@ struct ProfileView: View {
                     .font(.title3)
                     .foregroundColor(.red)
                 
-                Text("Sair da Conta")
+                Text("Sign Out")
                     .font(.headline)
                     .fontWeight(.medium)
                     .foregroundColor(.red)
@@ -266,7 +266,7 @@ struct ProfileView: View {
 
 // MARK: - Supporting Views
 
-/// Row para configurações
+/// Row for settings
 struct SettingsRow: View {
     let icon: String
     let title: String

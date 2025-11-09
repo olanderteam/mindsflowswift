@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View principal do Dashboard com painel de estado mental
+/// Main Dashboard view with mental state panel
 struct DashboardView: View {
     @StateObject private var viewModel = DashboardViewModel()
     @StateObject private var collapseModeViewModel = CollapseModeViewModel()
@@ -22,23 +22,23 @@ struct DashboardView: View {
                     // Header com saudação
                     headerSection
                     
-                    // Estado mental atual
+                    // Current mental state
                     currentStateSection
                     
                     // Insight diária
                     dailyInsightSection
                     
-                    // Estatísticas do dia (ocultar no modo colapso se configurado)
+                    // Daily statistics (hide in collapse mode if configured)
                     if !collapseModeViewModel.shouldHideFeature(.statistics) {
                         dailyStatsSection
                     }
                     
-                    // Tarefas sugeridas (ocultar no modo colapso se configurado)
+                    // Suggested tasks (hide in collapse mode if configured)
                     if !viewModel.suggestedTasks.isEmpty && !collapseModeViewModel.shouldHideFeature(.suggestions) {
                         suggestedTasksSection
                     }
                     
-                    // Wisdom sugerido (ocultar no modo colapso se configurado)
+                    // Suggested wisdom (hide in collapse mode if configured)
                     if !viewModel.suggestedWisdom.isEmpty && !collapseModeViewModel.shouldHideFeature(.suggestions) {
                         suggestedWisdomSection
                     }
@@ -53,7 +53,7 @@ struct DashboardView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { 
-                        // Mostrar configurações de colapso
+                        // Show collapse settings
                     }) {
                         Image(systemName: collapseModeViewModel.isCollapseMode ? "eye.slash.fill" : "eye.fill")
                             .foregroundColor(collapseModeViewModel.isCollapseMode ? .purple : .gray)
@@ -72,7 +72,7 @@ struct DashboardView: View {
             .sheet(isPresented: $showingQuickAddWisdom) {
                 QuickAddWisdomView(viewModel: viewModel)
             }
-            .alert("Erro", isPresented: $viewModel.showError) {
+            .alert("Error", isPresented: $viewModel.showError) {
                 Button("OK") { }
             } message: {
                 Text(viewModel.errorMessage)
@@ -91,7 +91,7 @@ struct DashboardView: View {
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    Text("Como você está se sentindo hoje?")
+                    Text("How are you feeling hoje?")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -110,17 +110,17 @@ struct DashboardView: View {
         }
     }
     
-    // MARK: - Estado Mental Atual
+    // MARK: - Current Mental State
     
     private var currentStateSection: some View {
         CollapseAwareCard {
             VStack(spacing: collapseModeViewModel.getUIConfiguration().spacing) {
-                // Card principal do estado mental
+                // Main mental state card
                 Button(action: { showingMentalStateUpdate = true }) {
                     VStack(spacing: collapseModeViewModel.getUIConfiguration().spacing) {
                         HStack {
                             CollapseAwareText(
-                                text: "Estado Mental Atual",
+                                text: "Current Mental State",
                                 style: .headline
                             )
                             
@@ -176,7 +176,7 @@ struct DashboardView: View {
                             Spacer()
                         }
                         
-                        // Recomendação (ocultar no modo colapso)
+                        // Recommendation (hide in collapse mode)
                         if !collapseModeViewModel.simplifyNavigation {
                             Text(viewModel.currentRecommendation)
                                 .font(.caption)
@@ -191,9 +191,9 @@ struct DashboardView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 
-                // Última atualização (ocultar no modo colapso)
+                // Last update (hide in collapse mode)
                 if !collapseModeViewModel.simplifyNavigation {
-                    Text("Atualizado \(viewModel.lastUpdated.formatted(date: .omitted, time: .shortened))")
+                    Text("Updated \(viewModel.lastUpdated.formatted(date: .omitted, time: .shortened))")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }

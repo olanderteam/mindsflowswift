@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// View para visualizar e editar detalhes de uma entrada de wisdom
+/// View to view and edit details de uma entrada de wisdom
 struct WisdomDetailView: View {
     let wisdom: Wisdom
     @ObservedObject var viewModel: WisdomViewModel
@@ -33,7 +33,7 @@ struct WisdomDetailView: View {
                 }
                 .padding()
             }
-            .navigationTitle(isEditing ? "Editar Wisdom" : "Wisdom")
+            .navigationTitle(isEditing ? "Edit Wisdom" : "Wisdom")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -48,14 +48,14 @@ struct WisdomDetailView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if isEditing {
-                        Button("Salvar") {
+                        Button("Save") {
                             saveChanges()
                         }
                         .disabled(isLoading || !isFormValid)
                         .fontWeight(.semibold)
                     } else {
                         Menu {
-                            Button("Editar", systemImage: "pencil") {
+                            Button("Edit", systemImage: "pencil") {
                                 startEditing()
                             }
                             
@@ -74,7 +74,7 @@ struct WisdomDetailView: View {
                     }
                 }
             }
-            .alert("Deletar Wisdom", isPresented: $showDeleteAlert) {
+            .alert("Delete Wisdom", isPresented: $showDeleteAlert) {
                 Button("Cancelar", role: .cancel) { }
                 Button("Deletar", role: .destructive) {
                     deleteWisdom()
@@ -103,7 +103,7 @@ struct WisdomDetailView: View {
                 tagsSection
             }
             
-            // Metadados
+            // Metadata
             metadataSection
             
             // Ações rápidas
@@ -217,7 +217,7 @@ struct WisdomDetailView: View {
                 
                 if wisdom.updatedAt != wisdom.createdAt {
                     VStack(alignment: .trailing, spacing: 4) {
-                        Text("Atualizado em")
+                        Text("Updated em")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Text(wisdom.updatedAt.formatted(date: .abbreviated, time: .shortened))
@@ -238,7 +238,7 @@ struct WisdomDetailView: View {
                 }
                 .buttonStyle(.bordered)
                 
-                Button("Editar") {
+                Button("Edit") {
                     startEditing()
                 }
                 .buttonStyle(.borderedProminent)

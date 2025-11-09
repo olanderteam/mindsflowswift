@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-/// ViewModel para gerenciar o modo colapso minimalista
+/// ViewModel to manage minimalist collapse mode
 @MainActor
 class CollapseModeViewModel: ObservableObject {
     // MARK: - Published Properties
@@ -91,7 +91,7 @@ class CollapseModeViewModel: ObservableObject {
         isCollapseMode.toggle()
     }
     
-    /// Aplica configurações rápidas baseadas no estado mental
+    /// Applies quick settings based on mental state
     func applyQuickSettings(for energyLevel: EnergyLevel) {
         switch energyLevel {
         case .low:
@@ -120,7 +120,7 @@ class CollapseModeViewModel: ObservableObject {
         }
     }
     
-    /// Retorna configurações de UI baseadas no modo colapso
+    /// Returns configurações de UI baseadas no modo colapso
     func getUIConfiguration() -> UIConfiguration {
         return UIConfiguration(
             isCollapseMode: isCollapseMode,
@@ -132,7 +132,7 @@ class CollapseModeViewModel: ObservableObject {
         )
     }
     
-    /// Verifica se uma feature específica deve ser ocultada
+    /// Checks if uma feature específica deve ser ocultada
     func shouldHideFeature(_ feature: CollapseFeature) -> Bool {
         guard isCollapseMode else { return false }
         
@@ -202,7 +202,7 @@ class CollapseModeViewModel: ObservableObject {
     }
     
     private func setupNotifications() {
-        // Observar mudanças no estado mental para sugerir modo colapso
+        // Observe mental state changes to suggest collapse mode
         NotificationCenter.default.publisher(for: .mentalStateDidUpdate)
             .sink { [weak self] notification in
                 self?.handleMentalStateUpdate(notification)
