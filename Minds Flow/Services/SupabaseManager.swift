@@ -120,7 +120,7 @@ class SupabaseManager: ObservableObject {
     /// Checks authentication status
     func checkAuthStatus() async {
         do {
-            // Verificar se há sessão ativa no Supabase
+            // Check if there's an active session in Supabase
             let session = try await supabase.auth.session
             
             await MainActor.run {
@@ -170,7 +170,7 @@ class SupabaseManager: ObservableObject {
         
         var queryBuilder = supabase.from(table).select()
         
-        // Aplicar filtros se houver query
+        // Apply filters if there's a query
         if let query = query {
             queryBuilder = query.apply(to: queryBuilder)
         }
@@ -290,8 +290,8 @@ class SupabaseManager: ObservableObject {
     
     /// Deleta múltiplos registros com filtro
     /// - Parameters:
-    ///   - table: Nome da tabela
-    ///   - query: Query para filtrar registros a deletar
+    ///   - table: Table name
+    ///   - query: Query to filter records to delete
     func deleteMany(from table: String, query: SupabaseQuery) async throws {
         guard isOnline else {
             throw SupabaseError.offline
@@ -423,7 +423,7 @@ struct SupabaseQuery {
     func apply<T>(to builder: T) -> T {
         var result = builder
         
-        // Aplicar filtros
+        // Apply filters
         for (column, operation, value) in filters {
             // Converter value para String para compatibilidade
             let stringValue = "\(value)"
@@ -441,17 +441,17 @@ struct SupabaseQuery {
             }
         }
         
-        // Aplicar ordenação
+        // Apply ordering
         if let column = orderColumn {
             result = (result as! PostgrestTransformBuilder).order(column, ascending: !orderDescending) as! T
         }
         
-        // Aplicar limite
+        // Apply limit
         if let limit = limitValue {
             result = (result as! PostgrestTransformBuilder).limit(limit) as! T
         }
         
-        // Aplicar range
+        // Apply range
         if let start = rangeStart, let end = rangeEnd {
             result = (result as! PostgrestTransformBuilder).range(from: start, to: end) as! T
         }

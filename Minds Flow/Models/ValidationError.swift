@@ -20,13 +20,13 @@ enum ValidationError: LocalizedError {
         case .custom(let message):
             return message
         case .emptyTitle:
-            return "O título não pode estar vazio"
+            return "Title cannot be empty"
         case .titleTooLong:
-            return "O título não pode ter mais de 200 caracteres"
+            return "Title cannot be longer than 200 characters"
         case .invalidTimeEstimate:
-            return "A estimativa de tempo deve estar entre 1 e 1440 minutos (24 horas)"
+            return "Time estimate must be between 1 and 1440 minutes (24 hours)"
         case .invalidDueDate:
-            return "A data de vencimento não pode ser muito antiga"
+            return "Due date cannot be too old"
         }
     }
 }

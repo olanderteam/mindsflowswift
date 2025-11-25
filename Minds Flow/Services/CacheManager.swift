@@ -36,7 +36,7 @@ class CacheManager {
     
     // MARK: - Initialization
     private init() {
-        // Criar diretório de cache se não existir
+        // Create cache directory if it doesn't exist
         let cachesDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
         self.cacheDirectory = cachesDirectory.appendingPathComponent("MindsFlowCache", isDirectory: true)
         
@@ -128,26 +128,26 @@ class CacheManager {
     }
     
     /// Clears cache para uma chave específica
-    /// - Parameter key: Cache key a ser limpa
+    /// - Parameter key: Cache key to be cleared
     func clearCache(for key: CacheKey) {
-        // Limpar UserDefaults
+        // Clear UserDefaults
         userDefaults.removeObject(forKey: key.rawValue)
         
-        // Limpar arquivo se existir
+        // Clear file if it exists
         let fileURL = cacheDirectory.appendingPathComponent(key.fileName)
         try? fileManager.removeItem(at: fileURL)
         
         print("✅ Cleared cache for key: \(key.rawValue)")
     }
     
-    /// Limpa todo o cache
+    /// Clears all cache
     func clearAllCache() {
-        // Limpar todos os UserDefaults
+        // Clear all UserDefaults
         for key in CacheKey.allCases {
             userDefaults.removeObject(forKey: key.rawValue)
         }
         
-        // Limpar diretório de cache
+        // Clear cache directory
         if fileManager.fileExists(atPath: cacheDirectory.path) {
             try? fileManager.removeItem(at: cacheDirectory)
             try? fileManager.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)

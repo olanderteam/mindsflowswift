@@ -26,7 +26,7 @@ struct AppConfig {
     }
 }
 
-/// Função para inicializar o aplicativo
+/// Function to initialize the application
 func initializeApp() {
-    print("\(AppConfig.appName) v\(AppConfig.appVersion) inicializado")
+    print("\(AppConfig.appName) v\(AppConfig.appVersion) initialized")
 }

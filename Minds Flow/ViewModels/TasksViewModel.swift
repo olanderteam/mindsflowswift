@@ -69,14 +69,14 @@ class TasksViewModel: ObservableObject {
                 throw SupabaseError.notAuthenticated
             }
             
-            // Tentar carregar do Supabase
+            // Try to load from Supabase
             let query = SupabaseQuery.userIdOrderedByDate(userId, descending: true)
             let fetchedTasks: [Task] = try await supabase.fetch(from: "tasks", query: query)
             
             tasks = fetchedTasks
             applyFilters()
             
-            // Atualizar cache
+            // Update cache
             try? cache.cache(fetchedTasks, for: .tasks)
             
             print("✅ Loaded \(fetchedTasks.count) tasks from Supabase")
@@ -84,7 +84,7 @@ class TasksViewModel: ObservableObject {
         } catch {
             print("❌ Failed to load tasks: \(error)")
             
-            // Se falhar, carregar do cache
+            // If it fails, load from cache
             if let cachedTasks: [Task] = try? cache.getCached(for: .tasks) {
                 tasks = cachedTasks
                 applyFilters()
@@ -164,7 +164,7 @@ class TasksViewModel: ObservableObject {
             try task.validate()
             
             if supabase.isOnline {
-                // Atualizar no Supabase
+                // Update in Supabase
                 let updatedTask: Task = try await supabase.update(task, in: "tasks", id: task.id)
                 
                 if let index = tasks.firstIndex(where: { $0.id == task.id }) {
@@ -177,7 +177,7 @@ class TasksViewModel: ObservableObject {
                 
                 print("✅ Task updated in Supabase")
             } else {
-                // Offline: atualizar localmente e enfileirar
+                // Offline: update locally and queue
                 if let index = tasks.firstIndex(where: { $0.id == task.id }) {
                     tasks[index] = task
                     applyFilters()
@@ -202,7 +202,7 @@ class TasksViewModel: ObservableObject {
         
         do {
             if supabase.isOnline {
-                // Deletar do Supabase
+                // Delete from Supabase
                 try await supabase.delete(from: "tasks", id: task.id)
                 tasks.removeAll { $0.id == task.id }
                 applyFilters()

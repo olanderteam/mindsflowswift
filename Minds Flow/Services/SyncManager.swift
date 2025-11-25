@@ -111,7 +111,7 @@ class SyncManager: ObservableObject {
             }
         }
         
-        // Manter apenas operações que falharam na fila
+        // Keep only failed operations in queue
         syncQueue = failedOperations
         pendingOperationsCount = syncQueue.count
         saveQueue()
@@ -208,7 +208,7 @@ class SyncManager: ObservableObject {
     
     // MARK: - Retry Logic
     
-    /// Tenta sincronizar novamente operações que falharam
+    /// Tries to sync failed operations again
     func retryFailedOperations() async throws {
         guard !syncErrors.isEmpty else {
             print("ℹ️ No failed operations to retry")
@@ -228,7 +228,7 @@ class SyncManager: ObservableObject {
         pendingOperationsCount = syncQueue.count
         saveQueue()
         
-        // Tentar sincronizar novamente
+        // Try to sync again
         try await syncPendingOperations()
     }
 }
@@ -263,9 +263,9 @@ struct SyncOperation: Codable, Identifiable {
 /// Estratégia de resolução de conflitos
 enum ConflictStrategy {
     case localWins      // Dados locais têm prioridade
-    case remoteWins     // Dados remotos têm prioridade
-    case mostRecent     // Dados mais recentes têm prioridade
-    case merge          // Tentar mesclar dados
+    case remoteWins     // Remote data has priority
+    case mostRecent     // Most recent data has priority
+    case merge          // Try to merge data
 }
 
 /// Erro de sincronização

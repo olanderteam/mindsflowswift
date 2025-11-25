@@ -93,7 +93,7 @@ class DashboardViewModel: ObservableObject {
         } catch {
             print("❌ Failed to load mental state: \(error)")
             
-            // Tentar carregar do cache
+            // Try to load from cache
             if let cachedState: MentalState = try? cache.getCachedSingle(for: .mentalStates) {
                 currentMentalState = cachedState
                 updateSuggestions()
@@ -138,16 +138,16 @@ class DashboardViewModel: ObservableObject {
                 
                 print("✅ Mental state updated in Supabase")
             } else {
-                // Offline: salvar localmente
+                // Offline: save locally
                 currentMentalState = newState
                 print("⚠️ Mental state saved locally (offline)")
             }
             
-            // Atualizar sugestões e insights
+            // Update suggestions and insights
             updateSuggestions()
             generateDailyInsight()
             
-            // Atualizar estatísticas
+            // Update statistics
             updateStats(action: .energyCheckin)
             
         } catch {
@@ -177,7 +177,7 @@ class DashboardViewModel: ObservableObject {
         } catch {
             print("❌ Failed to load usage stats: \(error)")
             
-            // Tentar carregar do cache
+            // Try to load from cache
             if let cachedStats: UsageStats = try? cache.getCachedSingle(for: .usageStats) {
                 usageStats = cachedStats
                 print("✅ Loaded usage stats from cache")
@@ -207,7 +207,7 @@ class DashboardViewModel: ObservableObject {
         } catch {
             print("❌ Failed to load timeline events: \(error)")
             
-            // Tentar carregar do cache
+            // Try to load from cache
             if let cachedEvents: [TimelineEvent] = try? cache.getCached(for: .timelineEvents) {
                 timelineEvents = cachedEvents
                 print("✅ Loaded timeline events from cache")
@@ -336,7 +336,7 @@ class DashboardViewModel: ObservableObject {
     
     // MARK: - Quick Actions
     
-    /// Ação rápida para adicionar tarefa
+    /// Quick action to add task
     func quickAddTask(title: String, energyLevel: EnergyLevel, description: String = "", purpose: String = "") async {
         await tasksViewModel.createTask(
             title: title,
@@ -348,7 +348,7 @@ class DashboardViewModel: ObservableObject {
         updateSuggestions()
     }
     
-    /// Ação rápida para adicionar wisdom
+    /// Quick action to add wisdom
     func quickAddWisdom(content: String, category: WisdomCategory = .insight, emotion: Emotion) async {
         await wisdomViewModel.createWisdom(
             content: content,
@@ -363,10 +363,10 @@ class DashboardViewModel: ObservableObject {
         await tasksViewModel.toggleTaskCompletion(task)
         updateStats(action: .taskCompleted)
         
-        // Remover da lista de sugestões
+        // Remove from suggestions list
         suggestedTasks.removeAll { $0.id == task.id }
         
-        // Atualizar sugestões
+        // Update suggestions
         updateSuggestions()
     }
     

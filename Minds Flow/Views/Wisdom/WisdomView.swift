@@ -185,7 +185,7 @@ struct WisdomView: View {
                                 selectedWisdom = wisdom
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button("Deletar", role: .destructive) {
+                                Button("Delete", role: .destructive) {
                                     _Concurrency.Task {
                                         await viewModel.deleteWisdom(wisdom)
                                     }

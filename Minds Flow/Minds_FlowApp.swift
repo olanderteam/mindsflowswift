@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct Minds_FlowApp: App {
     init() {
-        // Inicializa o AuthManager
+        // Initialize AuthManager
         _ = AuthManager.shared
     }
     

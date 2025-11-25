@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// Modificador de view para aplicar estilos do modo colapso
+/// View modifier to apply collapse mode styles
 struct CollapseModeModifier: ViewModifier {
     @ObservedObject var collapseModeViewModel: CollapseModeViewModel
     

@@ -71,7 +71,7 @@ class WisdomViewModel: ObservableObject {
                 throw SupabaseError.notAuthenticated
             }
             
-            // Tentar carregar do Supabase
+            // Try to load from Supabase
             let query = SupabaseQuery.userIdOrderedByDate(userId, descending: true)
             let fetchedEntries: [Wisdom] = try await supabase.fetch(from: "wisdom_entries", query: query)
             
@@ -86,7 +86,7 @@ class WisdomViewModel: ObservableObject {
         } catch {
             print("❌ Failed to load wisdom entries: \(error)")
             
-            // Se falhar, carregar do cache
+            // If it fails, load from cache
             if let cachedEntries: [Wisdom] = try? cache.getCached(for: .wisdom) {
                 wisdomEntries = cachedEntries
                 applyFilters()

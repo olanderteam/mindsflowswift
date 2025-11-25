@@ -331,7 +331,7 @@ struct DashboardView: View {
             
             HStack(spacing: 12) {
                 QuickActionButton(
-                    title: "Atualizar Estado",
+                    title: "Update State",
                     icon: "heart.circle",
                     color: .red
                 ) {

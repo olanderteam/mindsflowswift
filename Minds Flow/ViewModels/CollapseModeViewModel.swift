@@ -174,7 +174,7 @@ class CollapseModeViewModel: ObservableObject {
     }
     
     private func applyCollapseModeSettings() {
-        // Aplicar configurações quando o modo colapso é ativado
+        // Apply settings when collapse mode is activated
         if forceDarkMode {
             applyThemeSettings()
         }

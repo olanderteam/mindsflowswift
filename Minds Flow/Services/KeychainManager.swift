@@ -36,7 +36,7 @@ class KeychainManager {
             throw KeychainError.invalidData
         }
         
-        // Deletar valor existente primeiro
+        // Delete existing value first
         try? delete(for: key)
         
         // Create query to add
@@ -137,13 +137,13 @@ enum KeychainError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidData:
-            return "Dados inválidos para o Keychain"
+            return "Invalid data for Keychain"
         case .saveFailed(let status):
-            return "Falha ao salvar no Keychain (status: \(status))"
+            return "Failed to save to Keychain (status: \(status))"
         case .retrieveFailed(let status):
-            return "Falha ao recuperar do Keychain (status: \(status))"
+            return "Failed to retrieve from Keychain (status: \(status))"
         case .deleteFailed(let status):
-            return "Falha ao deletar do Keychain (status: \(status))"
+            return "Failed to delete from Keychain (status: \(status))"
         }
     }
 }

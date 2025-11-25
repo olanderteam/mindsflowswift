@@ -59,13 +59,13 @@ struct WisdomDetailView: View {
                                 startEditing()
                             }
                             
-                            Button("Compartilhar", systemImage: "square.and.arrow.up") {
+                            Button("Share", systemImage: "square.and.arrow.up") {
                                 shareWisdom()
                             }
                             
                             Divider()
                             
-                            Button("Deletar", systemImage: "trash", role: .destructive) {
+                            Button("Delete", systemImage: "trash", role: .destructive) {
                                 showDeleteAlert = true
                             }
                         } label: {
@@ -75,12 +75,12 @@ struct WisdomDetailView: View {
                 }
             }
             .alert("Delete Wisdom", isPresented: $showDeleteAlert) {
-                Button("Cancelar", role: .cancel) { }
-                Button("Deletar", role: .destructive) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
                     deleteWisdom()
                 }
             } message: {
-                Text("Esta ação não pode ser desfeita.")
+                Text("This action cannot be undone.")
             }
         }
         .onAppear {
@@ -233,7 +233,7 @@ struct WisdomDetailView: View {
             Divider()
             
             HStack(spacing: 16) {
-                Button("Compartilhar") {
+                Button("Share") {
                     shareWisdom()
                 }
                 .buttonStyle(.bordered)
