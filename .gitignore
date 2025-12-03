@@ -94,5 +94,4 @@ iOSInjectionProject/
 
 # Supabase Configuration
 # IMPORTANT: Do not commit credentials to version control
-# SupabaseConfig.swift contains sensitive API keys
-# Minds Flow/Services/SupabaseConfig.swift
+Config.xcconfig
