@@ -8,52 +8,18 @@
 import Foundation
 
 /// Supabase configuration
-/// Reads credentials from Info.plist (populated from Config.xcconfig)
-/// SECURE: No hardcoded credentials in source code
+/// IMPORTANT: For production, move these to environment variables or secure storage
+/// Current approach: Hardcoded for development (to be replaced before App Store submission)
 struct SupabaseConfig {
     
-    // MARK: - Configuration Keys
-    private enum ConfigKey: String {
-        case supabaseURL = "SUPABASE_URL"
-        case supabaseAnonKey = "SUPABASE_ANON_KEY"
-    }
+    // MARK: - Supabase Credentials
+    // TODO: Move to secure configuration before production release
+    // See SECURITY.md for best practices
+    static let projectURL = "https://txlukdftqiqbpdxuuozp.supabase.co"
     
-    // MARK: - Supabase Credentials (from Info.plist)
-    static var projectURL: String {
-        guard let url = Bundle.main.object(forInfoDictionaryKey: ConfigKey.supabaseURL.rawValue) as? String,
-              !url.isEmpty else {
-            fatalError("""
-                ❌ SUPABASE_URL not found in Info.plist
-                
-                Setup Instructions:
-                1. Copy Config.example.xcconfig to Config.xcconfig
-                2. Fill in your Supabase credentials in Config.xcconfig
-                3. Make sure Config.xcconfig is added to your target's build settings
-                4. Rebuild the project
-                
-                See README.md for detailed setup instructions.
-                """)
-        }
-        return url
-    }
-    
-    static var anonKey: String {
-        guard let key = Bundle.main.object(forInfoDictionaryKey: ConfigKey.supabaseAnonKey.rawValue) as? String,
-              !key.isEmpty else {
-            fatalError("""
-                ❌ SUPABASE_ANON_KEY not found in Info.plist
-                
-                Setup Instructions:
-                1. Copy Config.example.xcconfig to Config.xcconfig
-                2. Fill in your Supabase credentials in Config.xcconfig
-                3. Make sure Config.xcconfig is added to your target's build settings
-                4. Rebuild the project
-                
-                See README.md for detailed setup instructions.
-                """)
-        }
-        return key
-    }
+    static let anonKey = """
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bHVrZGZ0cWlxYnBkeHV1b3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyNzU2NzcsImV4cCI6MjA3NTg1MTY3N30.D4DXTknWbq2zHp3UKA_ecohfmP-11mNGhCkv8hYfMks
+    """
     
     // MARK: - Computed Properties
     static var url: URL {
@@ -98,6 +64,7 @@ struct SupabaseConfig {
             ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             URL: \(projectURL)
             Key: \(String(anonKey.prefix(20)))...
+            ⚠️  WARNING: Using hardcoded credentials
             ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             
             """)

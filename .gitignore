@@ -95,3 +95,4 @@ iOSInjectionProject/
 # Supabase Configuration
 # IMPORTANT: Do not commit credentials to version control
 Config.xcconfig
+secrets.json
