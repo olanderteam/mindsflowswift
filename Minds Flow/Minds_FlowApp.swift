@@ -12,11 +12,15 @@ struct Minds_FlowApp: App {
     init() {
         // Initialize AuthManager
         _ = AuthManager.shared
+        
+        // Initialize ErrorHandler
+        _ = ErrorHandler.shared
     }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .errorBanner()
         }
     }
 }

@@ -17,7 +17,7 @@ struct WisdomView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Header com busca e filtros
+                // Header with search and filters
                 wisdomHeader
                 
                 // Filtros ativos
@@ -59,7 +59,7 @@ struct WisdomView: View {
     
     private var wisdomHeader: some View {
         VStack(spacing: 12) {
-            // Barra de busca
+            // Search bar
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.secondary)

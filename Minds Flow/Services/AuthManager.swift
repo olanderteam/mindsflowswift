@@ -95,7 +95,7 @@ class AuthManager: ObservableObject {
         errorMessage = nil
         
         do {
-            // Autenticar com Supabase
+            // Authenticate with Supabase
             let session = try await supabase.auth.signIn(
                 email: email,
                 password: password
@@ -122,9 +122,11 @@ class AuthManager: ObservableObject {
             print("✅ Sign in successful: \(email)")
             
         } catch {
-            errorMessage = "Error logging in: \(error.localizedDescription)"
+            let appError = mapAuthError(error)
+            errorMessage = appError.detailedMessage
+            ErrorHandler.shared.handle(appError)
             print("❌ Sign in failed: \(error)")
-            throw error
+            throw appError
         }
         
         isLoading = false
@@ -170,9 +172,11 @@ class AuthManager: ObservableObject {
             print("✅ Sign up successful: \(email)")
             
         } catch {
-            errorMessage = "Error creating account: \(error.localizedDescription)"
+            let appError = mapAuthError(error)
+            errorMessage = appError.detailedMessage
+            ErrorHandler.shared.handle(appError)
             print("❌ Sign up failed: \(error)")
-            throw error
+            throw appError
         }
         
         isLoading = false
@@ -359,6 +363,37 @@ class AuthManager: ObservableObject {
         } catch {
             print("❌ Failed to create profile: \(error)")
         }
+    }
+    
+    // MARK: - Error Mapping
+    
+    /// Maps authentication errors to AppError
+    private func mapAuthError(_ error: Error) -> AppError {
+        let errorString = error.localizedDescription.lowercased()
+        
+        if errorString.contains("invalid credentials") || errorString.contains("wrong password") {
+            return .invalidCredentials
+        }
+        if errorString.contains("email already") || errorString.contains("already registered") {
+            return .emailAlreadyExists
+        }
+        if errorString.contains("weak password") || errorString.contains("password too short") {
+            return .weakPassword
+        }
+        if errorString.contains("session expired") || errorString.contains("token expired") {
+            return .sessionExpired
+        }
+        if errorString.contains("user not found") {
+            return .userNotFound
+        }
+        if errorString.contains("email not verified") {
+            return .emailNotVerified
+        }
+        if errorString.contains("network") || errorString.contains("internet") {
+            return .networkUnavailable
+        }
+        
+        return .authenticationFailed
     }
 }
 

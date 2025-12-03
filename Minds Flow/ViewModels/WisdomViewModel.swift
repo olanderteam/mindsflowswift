@@ -198,13 +198,13 @@ class WisdomViewModel: ObservableObject {
         isLoading = false
     }
     
-    /// Deleta uma entrada de wisdom
+    /// Deletes a wisdom entry
     func deleteWisdom(_ wisdom: Wisdom) async {
         isLoading = true
         
         do {
             if supabase.isOnline {
-                // Deletar do Supabase
+                // Delete from Supabase
                 try await supabase.delete(from: "wisdom_entries", id: wisdom.id)
                 wisdomEntries.removeAll { $0.id == wisdom.id }
                 applyFilters()
@@ -323,7 +323,7 @@ class WisdomViewModel: ObservableObject {
         applyFilters()
     }
     
-    /// Atualiza texto de busca
+    /// Updates search text
     func updateSearchText(_ text: String) {
         searchText = text
         applyFilters()
@@ -383,7 +383,7 @@ class WisdomViewModel: ObservableObject {
             .map { $0 }
     }
     
-    /// Busca entradas por palavra-chave
+    /// Searches entries by keyword
     func searchWisdom(keyword: String) -> [Wisdom] {
         guard !keyword.isEmpty else { return wisdomEntries }
         

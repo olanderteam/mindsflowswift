@@ -89,7 +89,7 @@ class KeychainManager {
     
     // MARK: - Delete
     
-    /// Deleta um valor do Keychain
+    /// Deletes a value from Keychain
     /// - Parameter key: Keychain key
     func delete(for key: KeychainKey) throws {
         let query: [String: Any] = [

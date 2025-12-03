@@ -141,7 +141,7 @@ extension UsageStats {
         }
         
         if let mental = mentalStateEntries, mental > 0 {
-            parts.append("\(mental) registros mentais")
+            parts.append("\(mental) mental records")
         }
         
         return parts.isEmpty ? "Sem atividades ainda" : parts.joined(separator: ", ")

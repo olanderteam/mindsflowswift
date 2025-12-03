@@ -318,7 +318,7 @@ class TasksViewModel: ObservableObject {
         applyFilters()
     }
     
-    /// Atualiza texto de busca
+    /// Updates search text
     func updateSearchText(_ text: String) {
         searchText = text
         applyFilters()

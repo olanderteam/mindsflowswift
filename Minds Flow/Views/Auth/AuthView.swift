@@ -20,7 +20,7 @@ struct AuthView: View {
         Group {
             if isLoading {
                 // Loading screen
-                LoadingView()
+                AuthLoadingView()
             } else if authManager.isAuthenticated {
                 // Authenticated user - show main app
                 let _ = print("🔍 AuthView: User is authenticated, showing main app")
@@ -68,10 +68,10 @@ struct AuthView: View {
     }
 }
 
-// MARK: - Loading View
+// MARK: - Auth Loading View
 
-/// Initial app loading screen
-struct LoadingView: View {
+/// Initial app loading screen for authentication
+struct AuthLoadingView: View {
     
     @State private var isAnimating = false
     

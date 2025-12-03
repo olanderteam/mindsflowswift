@@ -286,7 +286,7 @@ struct TaskFiltersView: View {
     // MARK: - Helper Methods
     
     private func getFilteredTasksCount() -> Int {
-        // Simular contagem com filtros aplicados
+        // Simulate count with applied filters
         return viewModel.tasks.count
     }
     

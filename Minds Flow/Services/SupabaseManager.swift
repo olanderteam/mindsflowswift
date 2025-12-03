@@ -181,11 +181,11 @@ class SupabaseManager: ObservableObject {
         return response
     }
     
-    /// Busca um único registro
+    /// Fetches a single record
     /// - Parameters:
-    ///   - table: Nome da tabela
-    ///   - id: ID do registro
-    /// - Returns: Objeto do tipo especificado
+    ///   - table: Table name
+    ///   - id: Record ID
+    /// - Returns: Object of specified type
     func fetchSingle<T: Codable>(
         from table: String,
         id: UUID
@@ -227,11 +227,11 @@ class SupabaseManager: ObservableObject {
         return response
     }
     
-    /// Insere múltiplos registros
+    /// Inserts multiple records
     /// - Parameters:
-    ///   - data: Array de dados a serem inseridos
-    ///   - table: Nome da tabela
-    /// - Returns: Array de dados inseridos
+    ///   - data: Array of data to be inserted
+    ///   - table: Table name
+    /// - Returns: Array of inserted data
     func insertMany<T: Codable>(_ data: [T], into table: String) async throws -> [T] {
         guard isOnline else {
             throw SupabaseError.offline
@@ -288,7 +288,7 @@ class SupabaseManager: ObservableObject {
         print("✅ Deleted item from \(table)")
     }
     
-    /// Deleta múltiplos registros com filtro
+    /// Deletes multiple records with filter
     /// - Parameters:
     ///   - table: Table name
     ///   - query: Query to filter records to delete

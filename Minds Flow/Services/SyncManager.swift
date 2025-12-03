@@ -309,8 +309,8 @@ extension SyncManager {
     
     /// Cria operação de inserção
     /// - Parameters:
-    ///   - object: Objeto a ser inserido
-    ///   - table: Nome da tabela
+    ///   - object: Object to be inserted
+    ///   - table: Table name
     /// - Returns: SyncOperation
     func createInsertOperation<T: Codable>(_ object: T, in table: String) throws -> SyncOperation {
         let encoder = JSONEncoder()
