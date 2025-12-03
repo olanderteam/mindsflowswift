@@ -158,7 +158,7 @@ struct DashboardView: View {
                             // Emoção
                             VStack(spacing: 8) {
                                 if !collapseModeViewModel.simplifyNavigation {
-                                    Text("Emoção")
+                                    Text("Emotion")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
@@ -326,7 +326,7 @@ struct DashboardView: View {
     
     private var quickActionsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Ações Rápidas")
+            Text("Quick Actions")
                 .font(.headline)
             
             HStack(spacing: 12) {

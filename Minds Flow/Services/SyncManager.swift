@@ -8,8 +8,8 @@
 import Foundation
 import Supabase
 
-/// Gerenciador de sincronização para operações offline
-/// Enfileira operações quando offline e sincroniza quando voltar online
+/// Synchronization manager for offline operations
+/// Queues operations when offline and syncs when back online
 @MainActor
 class SyncManager: ObservableObject {
     
@@ -41,7 +41,7 @@ class SyncManager: ObservableObject {
         print("📝 Queued operation: \(operation.type.rawValue) on \(operation.table)")
     }
     
-    /// Carrega fila de operações do armazenamento persistente
+    /// Loads operation queue from persistent storage
     private func loadQueue() {
         guard let data = UserDefaults.standard.data(forKey: queueKey) else {
             print("ℹ️ No pending operations in queue")
@@ -199,8 +199,8 @@ class SyncManager: ObservableObject {
             return localIsNewer ? local : remote
             
         case .merge:
-            // Para merge, preferir dados mais recentes campo por campo
-            // Por simplicidade, usar mostRecent
+            // For merge, prefer most recent data field by field
+            // For simplicity, use mostRecent
             print("🔀 Conflict resolved: Using most recent (merge not fully implemented)")
             return local.updatedAt > remote.updatedAt ? local : remote
         }
@@ -262,7 +262,7 @@ struct SyncOperation: Codable, Identifiable {
 
 /// Estratégia de resolução de conflitos
 enum ConflictStrategy {
-    case localWins      // Dados locais têm prioridade
+    case localWins      // Local data has priority
     case remoteWins     // Remote data has priority
     case mostRecent     // Most recent data has priority
     case merge          // Try to merge data

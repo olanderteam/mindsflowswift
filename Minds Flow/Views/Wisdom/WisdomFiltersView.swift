@@ -71,7 +71,7 @@ struct WisdomFiltersView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("Encontre exatamente o que você procura")
+            Text("Find exactly what you're looking for")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -197,7 +197,7 @@ struct WisdomFiltersView: View {
             
             HStack(spacing: 16) {
                 FilterStatCard(
-                    title: "Total de Entradas",
+                    title: "Total Entries",
                     value: "\(viewModel.wisdomStats.total)",
                     icon: "book",
                     color: .blue
@@ -230,7 +230,7 @@ struct WisdomFiltersView: View {
     // MARK: - Computed Properties
     
     private var estimatedResults: Int {
-        // Simulação simples do resultado dos filtros
+        // Simple simulation of filter results
         var filtered = viewModel.wisdomEntries
         
         if let category = tempSelectedCategory {

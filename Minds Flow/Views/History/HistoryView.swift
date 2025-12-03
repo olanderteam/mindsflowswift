@@ -50,9 +50,9 @@ struct HistoryView: View {
     
     private var filterControlsSection: some View {
         VStack(spacing: 16) {
-            // Seletor de período
+            // Period selector
             HStack {
-                Text("Período")
+                Text("Period")
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
@@ -68,9 +68,9 @@ struct HistoryView: View {
                 .pickerStyle(SegmentedPickerStyle())
             }
             
-            // Seletor de métrica
+            // Metric selector
             HStack {
-                Text("Métrica")
+                Text("Metric")
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
@@ -182,7 +182,7 @@ struct HistoryView: View {
     
     private var summaryStatsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Resumo do Período")
+            Text("Period Summary")
                 .font(.headline)
                 .fontWeight(.semibold)
             

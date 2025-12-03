@@ -73,7 +73,7 @@ struct QuickAddTaskView: View {
         VStack(spacing: 16) {
             // Título
             VStack(alignment: .leading, spacing: 8) {
-                Text("Título *")
+                Text("Title *")
                     .font(.headline)
                 
                 TextField("Ex: Review project, Meditate 10 min...", text: $title)
@@ -82,7 +82,7 @@ struct QuickAddTaskView: View {
             
             // Descrição
             VStack(alignment: .leading, spacing: 8) {
-                Text("Descrição")
+                Text("Description")
                     .font(.headline)
                 
                 TextField("Task details (optional)", text: $description, axis: .vertical)
@@ -92,7 +92,7 @@ struct QuickAddTaskView: View {
             
             // Nível de energia
             VStack(alignment: .leading, spacing: 12) {
-                Text("Nível de Energia Necessário")
+                Text("Required Energy Level")
                     .font(.headline)
                 
                 HStack(spacing: 12) {
@@ -109,7 +109,7 @@ struct QuickAddTaskView: View {
             
             // Propósito
             VStack(alignment: .leading, spacing: 8) {
-                Text("Propósito")
+                Text("Purpose")
                     .font(.headline)
                 
                 TextField("Por que essa tarefa é importante?", text: $purpose)
@@ -125,7 +125,7 @@ struct QuickAddTaskView: View {
             HStack {
                 Image(systemName: "lightbulb.fill")
                     .foregroundColor(.yellow)
-                Text("Sugestão")
+                Text("Suggestion")
                     .font(.headline)
             }
             

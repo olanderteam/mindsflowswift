@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// Modelo para representar estatísticas de uso do aplicativo
-/// Agrega métricas de atividade do usuário
+/// Model to represent application usage statistics
+/// Aggregates user activity metrics
 struct UsageStats: Codable, Identifiable {
     
     // MARK: - Properties
@@ -67,7 +67,7 @@ struct UsageStats: Codable, Identifiable {
 
 extension UsageStats {
     
-    /// Taxa de conclusão de tarefas (0.0 a 1.0)
+    /// Task completion rate (0.0 to 1.0)
     var completionRate: Double {
         guard let total = totalTasks, total > 0,
               let completed = completedTasks else { return 0 }
@@ -79,7 +79,7 @@ extension UsageStats {
         return "\(Int(completionRate * 100))%"
     }
     
-    /// Tarefas pendentes
+    /// Pending tasks
     var pendingTasks: Int {
         guard let total = totalTasks,
               let completed = completedTasks else { return 0 }
@@ -110,7 +110,7 @@ extension UsageStats {
         return String(format: "%.1f", average)
     }
     
-    /// Returns há quanto tempo o usuário está no sistema
+    /// Returns how long the user has been in the system
     var membershipDuration: String? {
         guard let since = userSince else { return nil }
         
@@ -137,7 +137,7 @@ extension UsageStats {
         }
         
         if let completed = completedTasks, completed > 0 {
-            parts.append("\(completed) tarefas concluídas")
+            parts.append("\(completed) completed tasks")
         }
         
         if let mental = mentalStateEntries, mental > 0 {
@@ -164,7 +164,7 @@ extension UsageStats {
         completedTasks: 18,
         mentalStateEntries: 30,
         timelineEvents: 10,
-        userSince: Date().addingTimeInterval(-86400 * 30) // 30 dias atrás
+        userSince: Date().addingTimeInterval(-86400 * 30) // 30 days ago
     )
     
     static let sampleStatsNewUser = UsageStats(
@@ -174,6 +174,6 @@ extension UsageStats {
         completedTasks: 1,
         mentalStateEntries: 3,
         timelineEvents: 1,
-        userSince: Date().addingTimeInterval(-86400 * 2) // 2 dias atrás
+        userSince: Date().addingTimeInterval(-86400 * 2) // 2 days ago
     )
 }

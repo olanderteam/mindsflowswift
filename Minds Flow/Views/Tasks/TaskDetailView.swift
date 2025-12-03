@@ -119,7 +119,7 @@ struct TaskDetailView: View {
             // Barra de progresso visual
             if task.isCompleted {
                 HStack {
-                    Text("Concluída em")
+                    Text("Completed on")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
@@ -147,7 +147,7 @@ struct TaskDetailView: View {
         VStack(alignment: .leading, spacing: 20) {
             // Título
             VStack(alignment: .leading, spacing: 8) {
-                Text("Título")
+                Text("Title")
                     .font(.headline)
                     .foregroundColor(.secondary)
                 
@@ -160,7 +160,7 @@ struct TaskDetailView: View {
             // Descrição
             if let description = task.description, !description.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Descrição")
+                    Text("Description")
                         .font(.headline)
                         .foregroundColor(.secondary)
                     
@@ -173,7 +173,7 @@ struct TaskDetailView: View {
             // Propósito
             if let purpose = task.purpose, !purpose.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Propósito")
+                    Text("Purpose")
                         .font(.headline)
                         .foregroundColor(.secondary)
                     
@@ -196,7 +196,7 @@ struct TaskDetailView: View {
         VStack(alignment: .leading, spacing: 20) {
             // Título
             VStack(alignment: .leading, spacing: 8) {
-                Text("Título *")
+                Text("Title *")
                     .font(.headline)
                 
                 TextField("Título da tarefa", text: $editedTitle)
@@ -205,7 +205,7 @@ struct TaskDetailView: View {
             
             // Descrição
             VStack(alignment: .leading, spacing: 8) {
-                Text("Descrição")
+                Text("Description")
                     .font(.headline)
                 
                 TextField("Descrição da tarefa", text: $editedDescription, axis: .vertical)
@@ -215,7 +215,7 @@ struct TaskDetailView: View {
             
             // Nível de energia
             VStack(alignment: .leading, spacing: 12) {
-                Text("Nível de Energia")
+                Text("Energy Level")
                     .font(.headline)
                 
                 VStack(spacing: 8) {
@@ -232,7 +232,7 @@ struct TaskDetailView: View {
             
             // Propósito
             VStack(alignment: .leading, spacing: 8) {
-                Text("Propósito")
+                Text("Purpose")
                     .font(.headline)
                 
                 TextField("Por que essa tarefa é importante?", text: $editedPurpose)
@@ -245,7 +245,7 @@ struct TaskDetailView: View {
     
     private var metadataSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Informações")
+            Text("Information")
                 .font(.headline)
             
             VStack(spacing: 8) {

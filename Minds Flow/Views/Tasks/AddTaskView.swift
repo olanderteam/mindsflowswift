@@ -65,7 +65,7 @@ struct AddTaskView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("Defina uma tarefa clara e alcançável para seu crescimento")
+            Text("Define a clear and achievable task for your growth")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -81,7 +81,7 @@ struct AddTaskView: View {
                 HStack {
                     Image(systemName: "text.cursor")
                         .foregroundColor(.blue)
-                    Text("Título *")
+                    Text("Title *")
                         .font(.headline)
                 }
                 
@@ -99,7 +99,7 @@ struct AddTaskView: View {
                 HStack {
                     Image(systemName: "doc.text")
                         .foregroundColor(.green)
-                    Text("Descrição")
+                    Text("Description")
                         .font(.headline)
                 }
                 
@@ -124,7 +124,7 @@ struct AddTaskView: View {
                 HStack {
                     Image(systemName: "bolt.fill")
                         .foregroundColor(.yellow)
-                    Text("Nível de Energia Necessário")
+                    Text("Required Energy Level")
                         .font(.headline)
                 }
                 
@@ -145,7 +145,7 @@ struct AddTaskView: View {
                 HStack {
                     Image(systemName: "target")
                         .foregroundColor(.purple)
-                    Text("Propósito")
+                    Text("Purpose")
                         .font(.headline)
                 }
                 

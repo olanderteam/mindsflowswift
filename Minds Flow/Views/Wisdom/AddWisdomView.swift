@@ -92,7 +92,7 @@ struct AddWisdomView: View {
     private var contentSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Conteúdo")
+                Text("Content")
                     .font(.headline)
                 Text("*")
                     .foregroundColor(.red)
@@ -113,7 +113,7 @@ struct AddWisdomView: View {
                 )
             
             if content.count < 10 && !content.isEmpty {
-                Text("Mínimo 10 caracteres")
+                Text("Minimum 10 characters")
                     .font(.caption)
                     .foregroundColor(.red)
             }
@@ -164,7 +164,7 @@ struct AddWisdomView: View {
             TextField("Separe as tags por vírgula", text: $tagsText)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
-            Text("Ex: meditação, trabalho, relacionamentos")
+            Text("Ex: meditation, work, relationships")
                 .font(.caption)
                 .foregroundColor(.secondary)
             

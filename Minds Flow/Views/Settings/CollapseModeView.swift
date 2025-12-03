@@ -97,7 +97,7 @@ struct CollapseModeView: View {
                     Image(systemName: "info.circle.fill")
                         .foregroundColor(.blue)
                     
-                    Text("O modo colapso está ativo. A interface será simplificada para reduzir distrações.")
+                    Text("Collapse mode is active. The interface will be simplified to reduce distractions.")
                         .font(.caption)
                         .foregroundColor(.blue)
                     
@@ -197,7 +197,7 @@ struct CollapseModeView: View {
     
     private var benefitsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Benefícios")
+            Text("Benefits")
                 .font(.headline)
             
             VStack(spacing: 8) {

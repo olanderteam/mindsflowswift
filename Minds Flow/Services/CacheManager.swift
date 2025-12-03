@@ -70,9 +70,9 @@ class CacheManager {
         }
     }
     
-    /// Retrieves dados do cache
+    /// Retrieves data from cache
     /// - Parameter key: Cache key
-    /// - Returns: Array de objetos ou nil se não encontrado
+    /// - Returns: Array of objects or nil if not found
     func getCached<T: Codable>(for key: CacheKey) throws -> [T]? {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -110,9 +110,9 @@ class CacheManager {
         print("✅ Cached single object for key: \(key.rawValue)")
     }
     
-    /// Retrieves um único objeto do cache
+    /// Retrieves a single object from cache
     /// - Parameter key: Cache key
-    /// - Returns: Objeto ou nil se não encontrado
+    /// - Returns: Object or nil if not found
     func getCachedSingle<T: Codable>(for key: CacheKey) throws -> T? {
         guard let data = userDefaults.data(forKey: key.rawValue) else {
             print("ℹ️ No cache found for key: \(key.rawValue)")
@@ -232,7 +232,7 @@ class CacheManager {
     /// - Returns: true se o cache está expirado
     func isCacheExpired(for key: CacheKey, expirationTime: TimeInterval = 300) -> Bool {
         guard let lastModified = getCacheLastModified(for: key) else {
-            return true // Se não tem data, considerar expirado
+            return true // If no date, consider expired
         }
         
         let now = Date()

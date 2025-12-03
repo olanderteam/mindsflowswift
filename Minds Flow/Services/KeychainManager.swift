@@ -9,7 +9,7 @@ import Foundation
 import Security
 
 /// Manager for secure Keychain storage
-/// Armazena tokens e dados sensíveis de forma criptografada
+/// Stores tokens and sensitive data in encrypted form
 class KeychainManager {
     
     // MARK: - Singleton
@@ -108,7 +108,7 @@ class KeychainManager {
     
     // MARK: - Clear All
     
-    /// Limpa todos os valores do Keychain do app
+    /// Clears all Keychain values for the app
     func clearAll() throws {
         for key in KeychainKey.allCases {
             try? delete(for: key)

@@ -78,7 +78,7 @@ struct QuickAddWisdomView: View {
         VStack(spacing: 16) {
             // Conteúdo
             VStack(alignment: .leading, spacing: 8) {
-                Text("Conteúdo *")
+                Text("Content *")
                     .font(.headline)
                 
                 TextField("Compartilhe seu aprendizado, reflexão ou insight...", text: $content, axis: .vertical)
@@ -128,7 +128,7 @@ struct QuickAddWisdomView: View {
                 TextField("Ex: trabalho, relacionamentos, crescimento...", text: $tags)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 
-                Text("Separe as tags com vírgulas")
+                Text("Separate tags with commas")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -142,7 +142,7 @@ struct QuickAddWisdomView: View {
             HStack {
                 Image(systemName: "lightbulb.fill")
                     .foregroundColor(.yellow)
-                Text("Sugestão")
+                Text("Suggestion")
                     .font(.headline)
             }
             

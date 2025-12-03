@@ -108,7 +108,7 @@ class WisdomViewModel: ObservableObject {
         tags: [String] = []
     ) async {
         guard let userId = AuthManager.shared.currentUser?.id else {
-            showErrorMessage("Usuário não autenticado")
+            showErrorMessage("User not authenticated")
             return
         }
         
@@ -306,7 +306,7 @@ class WisdomViewModel: ObservableObject {
         }
         
         filteredEntries = filtered.sorted { wisdom1, wisdom2 in
-            // Ordenar por data de criação (mais recentes primeiro)
+            // Sort by creation date (most recent first)
             return wisdom1.createdAt > wisdom2.createdAt
         }
     }

@@ -86,7 +86,7 @@ struct MentalStateUpdateView: View {
             HStack {
                 Image(systemName: "bolt.fill")
                     .foregroundColor(.yellow)
-                Text("Nível de Energia")
+                Text("Energy Level")
                     .font(.headline)
             }
             
@@ -151,7 +151,7 @@ struct MentalStateUpdateView: View {
             HStack {
                 Image(systemName: "lightbulb.fill")
                     .foregroundColor(.yellow)
-                Text("Recomendação")
+                Text("Recommendation")
                     .font(.headline)
             }
             

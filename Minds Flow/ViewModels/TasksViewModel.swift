@@ -107,7 +107,7 @@ class TasksViewModel: ObservableObject {
         timeEstimate: Int? = nil
     ) async {
         guard let userId = AuthManager.shared.currentUser?.id else {
-            showErrorMessage("Usuário não autenticado")
+            showErrorMessage("User not authenticated")
             return
         }
         

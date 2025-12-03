@@ -106,7 +106,7 @@ struct TaskFiltersView: View {
     private var energyLevelsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Níveis de Energia")
+                Text("Energy Levels")
                     .font(.headline)
                 
                 Spacer()
@@ -141,7 +141,7 @@ struct TaskFiltersView: View {
     
     private var dateRangeSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Período")
+            Text("Period")
                 .font(.headline)
             
             VStack(spacing: 8) {
@@ -161,7 +161,7 @@ struct TaskFiltersView: View {
     
     private var additionalOptionsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Opções Adicionais")
+            Text("Additional Options")
                 .font(.headline)
             
             VStack(spacing: 8) {

@@ -163,7 +163,7 @@ struct WisdomDetailView: View {
     
     private var contentSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Conteúdo")
+            Text("Content")
                 .font(.headline)
                 .foregroundColor(.secondary)
             
@@ -253,7 +253,7 @@ struct WisdomDetailView: View {
     private var editContentSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Conteúdo")
+                Text("Content")
                     .font(.headline)
                 Text("*")
                     .foregroundColor(.red)
@@ -274,7 +274,7 @@ struct WisdomDetailView: View {
                 )
             
             if editedContent.count < 10 && !editedContent.isEmpty {
-                Text("Mínimo 10 caracteres")
+                Text("Minimum 10 characters")
                     .font(.caption)
                     .foregroundColor(.red)
             }

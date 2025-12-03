@@ -210,7 +210,7 @@ struct ProfileView: View {
                     color: .gray,
                     hasToggle: false
                 ) {
-                    // Não faz nada
+                    // Does nothing
                 }
                 
                 // Termos de uso
